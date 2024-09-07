@@ -1,0 +1,293 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Appendix a - Mastering Roguelike Game Design: From Permadeath to Procedural Generation</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="0.roguelike-game-design-book-toc.html">Chapter 0</a></li><li class="chapter-item expanded affix "><a href="1.1.roguelike-definition-chapter.html">Chapter 1.1</a></li><li class="chapter-item expanded affix "><a href="1.2.roguelike-history-chapter.html">Chapter 1.2</a></li><li class="chapter-item expanded affix "><a href="1.3.roguelike-key-elements-chapter.html">Chapter 1.3</a></li><li class="chapter-item expanded affix "><a href="2.1.roguelike-permadeath-chapter.html">Chapter 2.1</a></li><li class="chapter-item expanded affix "><a href="2.2.roguelike-procedural-generation-chapter.html">Chapter 2.2</a></li><li class="chapter-item expanded affix "><a href="2.3.roguelike-turn-based-gameplay-chapter.html">Chapter 2.3</a></li><li class="chapter-item expanded affix "><a href="2.4.roguelike-grid-based-chapter.html">Chapter 2.4</a></li><li class="chapter-item expanded affix "><a href="2.5.roguelike-resource-management.html">Chapter 2.5</a></li><li class="chapter-item expanded affix "><a href="3.1.algorithms-for-dungeon-generation.html">Chapter 3.1</a></li><li class="chapter-item expanded affix "><a href="3.2.creating-balanced-and-interesting-levels.html">Chapter 3.2</a></li><li class="chapter-item expanded affix "><a href="3.3.generating-items-enemies-quests.html">Chapter 3.3</a></li><li class="chapter-item expanded affix "><a href="3.4.ensuring-fairness-in-randomized-content.html">Chapter 3.4</a></li><li class="chapter-item expanded affix "><a href="4.1.designing-character-classes-and-races.html">Chapter 4.1</a></li><li class="chapter-item expanded affix "><a href="4.2.expecience-points-and-leveling-mechanisms.html">Chapter 4.2</a></li><li class="chapter-item expanded affix "><a href="4.3.skill-trees-and-ability-unlocks.html">Chapter 4.3</a></li><li class="chapter-item expanded affix "><a href="4.4.balancing-character-growth-and-game-difficulty.html">Chapter 4.4</a></li><li class="chapter-item expanded affix "><a href="5.1.turn-based-combat-systems.html">Chapter 5.1</a></li><li class="chapter-item expanded affix "><a href="5.2.designing-diverse-and-challenging-enemies.html">Chapter 5.2</a></li><li class="chapter-item expanded affix "><a href="5.3.boss-fights-and-special-encounters.html">Chapter 5.3</a></li><li class="chapter-item expanded affix "><a href="5.4.balancing-combat-difficulty-and-player-skill.html">Chapter 5.4</a></li><li class="chapter-item expanded affix "><a href="6.1.roguelike-item-design-chapter.html">Chapter 6.1</a></li><li class="chapter-item expanded affix "><a href="6.2.roguelike-crafting-systems-chapter.html">Chapter 6.2</a></li><li class="chapter-item expanded affix "><a href="6.3.roguelike-currency-shop-mechanics-chapter.html">Chapter 6.3</a></li><li class="chapter-item expanded affix "><a href="6.4.roguelike-inventory-identification-chapter.html">Chapter 6.4</a></li><li class="chapter-item expanded affix "><a href="7.1.html">Chapter 7.1</a></li><li class="chapter-item expanded affix "><a href="7.2.html">Chapter 7.2</a></li><li class="chapter-item expanded affix "><a href="7.3.html">Chapter 7.3</a></li><li class="chapter-item expanded affix "><a href="7.4.html">Chapter 7.4</a></li><li class="chapter-item expanded affix "><a href="8.1.html">Chapter 8.1</a></li><li class="chapter-item expanded affix "><a href="8.2.html">Chapter 8.2</a></li><li class="chapter-item expanded affix "><a href="8.3.html">Chapter 8.3</a></li><li class="chapter-item expanded affix "><a href="8.4.html">Chapter 8.4</a></li><li class="chapter-item expanded affix "><a href="9.1.html">Chapter 9.1</a></li><li class="chapter-item expanded affix "><a href="9.2.html">Chapter 9.2</a></li><li class="chapter-item expanded affix "><a href="9.3.html">Chapter 9.3</a></li><li class="chapter-item expanded affix "><a href="9.4.html">Chapter 9.4</a></li><li class="chapter-item expanded affix "><a href="10.1.html">Chapter 10.1</a></li><li class="chapter-item expanded affix "><a href="10.2.html">Chapter 10.2</a></li><li class="chapter-item expanded affix "><a href="10.3.html">Chapter 10.3</a></li><li class="chapter-item expanded affix "><a href="10.4.html">Chapter 10.4</a></li><li class="chapter-item expanded affix "><a href="11.1.html">Chapter 11.1</a></li><li class="chapter-item expanded affix "><a href="11.2.html">Chapter 11.2</a></li><li class="chapter-item expanded affix "><a href="11.3.html">Chapter 11.3</a></li><li class="chapter-item expanded affix "><a href="11.4.html">Chapter 11.4</a></li><li class="chapter-item expanded affix "><a href="12.1.html">Chapter 12.1</a></li><li class="chapter-item expanded affix "><a href="12.2.html">Chapter 12.2</a></li><li class="chapter-item expanded affix "><a href="12.3.html">Chapter 12.3</a></li><li class="chapter-item expanded affix "><a href="12.4.html">Chapter 12.4</a></li><li class="chapter-item expanded affix "><a href="13.1.html">Chapter 13.1</a></li><li class="chapter-item expanded affix "><a href="13.2.html">Chapter 13.2</a></li><li class="chapter-item expanded affix "><a href="13.3.html">Chapter 13.3</a></li><li class="chapter-item expanded affix "><a href="13.4.html">Chapter 13.4</a></li><li class="chapter-item expanded affix "><a href="14.1.html">Chapter 14.1</a></li><li class="chapter-item expanded affix "><a href="14.2.html">Chapter 14.2</a></li><li class="chapter-item expanded affix "><a href="14.3.html">Chapter 14.3</a></li><li class="chapter-item expanded affix "><a href="14.4.html">Chapter 14.4</a></li><li class="chapter-item expanded affix "><a href="15.1.html">Chapter 15.1</a></li><li class="chapter-item expanded affix "><a href="15.2.html">Chapter 15.2</a></li><li class="chapter-item expanded affix "><a href="15.3.html">Chapter 15.3</a></li><li class="chapter-item expanded affix "><a href="15.4.html">Chapter 15.4</a></li><li class="chapter-item expanded affix "><a href="16.1.html">Chapter 16.1</a></li><li class="chapter-item expanded affix "><a href="16.2.html">Chapter 16.2</a></li><li class="chapter-item expanded affix "><a href="16.3.html">Chapter 16.3</a></li><li class="chapter-item expanded affix "><a href="appendix-a.html" class="active">Appendix a</a></li><li class="chapter-item expanded affix "><a href="appendix-b.html">Appendix b</a></li><li class="chapter-item expanded affix "><a href="appendix-c.html">Appendix c</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Mastering Roguelike Game Design: From Permadeath to Procedural Generation</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="appendix-a-glossary-of-roguelike-terms"><a class="header" href="#appendix-a-glossary-of-roguelike-terms">Appendix A: Glossary of Roguelike Terms</a></h1>
+<p>This glossary provides definitions for common terms used in roguelike games and their development. Familiarizing yourself with these terms will help you better understand roguelike mechanics and discussions within the community.</p>
+<h2 id="a"><a class="header" href="#a">A</a></h2>
+<p><strong>ASCII</strong>: American Standard Code for Information Interchange; many traditional roguelikes use ASCII characters to represent game elements.</p>
+<p><strong>Amulet of Yendor</strong>: The primary goal item in the original Rogue game, often referenced in other roguelikes.</p>
+<h2 id="b"><a class="header" href="#b">B</a></h2>
+<p><strong>Bump attack</strong>: A combat system where moving into an enemy's space initiates an attack.</p>
+<p><strong>Berlin Interpretation</strong>: A set of high-value and low-value factors used to determine how "roguelike" a game is, established at the International Roguelike Development Conference 2008.</p>
+<h2 id="c"><a class="header" href="#c">C</a></h2>
+<p><strong>Crawl</strong>: Short for Dungeon Crawl Stone Soup, a popular open-source roguelike.</p>
+<p><strong>Character build</strong>: The combination of skills, attributes, and equipment that define a player's character.</p>
+<h2 id="d"><a class="header" href="#d">D</a></h2>
+<p><strong>Dungeon</strong>: The main play area in most roguelikes, usually consisting of multiple levels.</p>
+<p><strong>DCSSs</strong>: Acronym for Dungeon Crawl Stone Soup.</p>
+<h2 id="e"><a class="header" href="#e">E</a></h2>
+<p><strong>Emergent gameplay</strong>: Complex situations that arise from the interaction of simpler game mechanics.</p>
+<p><strong>Exploration</strong>: The act of uncovering the map and discovering new areas, items, or enemies.</p>
+<h2 id="f"><a class="header" href="#f">F</a></h2>
+<p><strong>FOV</strong>: Field of View; the area visible to the player character.</p>
+<p><strong>Food clock</strong>: A game mechanic where the player must regularly find and consume food to survive.</p>
+<h2 id="g"><a class="header" href="#g">G</a></h2>
+<p><strong>Grind</strong>: Repetitive gameplay to gain experience or resources.</p>
+<p><strong>Gear-based progression</strong>: Character improvement primarily through finding and equipping better items.</p>
+<h2 id="h"><a class="header" href="#h">H</a></h2>
+<p><strong>Hack</strong>: One of the earliest roguelikes, and the basis for NetHack.</p>
+<p><strong>Hunger system</strong>: A mechanic where the player character must eat regularly to avoid penalties or death.</p>
+<h2 id="i"><a class="header" href="#i">I</a></h2>
+<p><strong>Identification</strong>: The process of discovering the properties of unidentified items.</p>
+<p><strong>Inventory management</strong>: The strategic organization and use of limited inventory space.</p>
+<h2 id="l"><a class="header" href="#l">L</a></h2>
+<p><strong>Level generation</strong>: The algorithmic creation of game levels.</p>
+<p><strong>Loot</strong>: Items or treasure found throughout the game.</p>
+<h2 id="m"><a class="header" href="#m">M</a></h2>
+<p><strong>Meta-progression</strong>: Persistent upgrades or unlocks that carry over between runs.</p>
+<p><strong>Mana</strong>: Often used as a resource for casting spells or using abilities.</p>
+<h2 id="n"><a class="header" href="#n">N</a></h2>
+<p><strong>NetHack</strong>: One of the most famous and influential roguelikes.</p>
+<p><strong>Noob trap</strong>: Game elements that seem beneficial but are actually detrimental, especially to new players.</p>
+<h2 id="p"><a class="header" href="#p">P</a></h2>
+<p><strong>Permadeath</strong>: When player death results in starting over from the beginning with a new character.</p>
+<p><strong>Procedural generation</strong>: Algorithmic creation of game content, including levels, items, and enemies.</p>
+<h2 id="r"><a class="header" href="#r">R</a></h2>
+<p><strong>Rogue</strong>: The 1980 game that gave the genre its name.</p>
+<p><strong>RNG</strong>: Random Number Generator; used to determine outcomes of actions and generation of content.</p>
+<h2 id="s"><a class="header" href="#s">S</a></h2>
+<p><strong>Scumming</strong>: Exploiting game mechanics or level generation for advantage, often frowned upon.</p>
+<p><strong>Spoiler</strong>: Information about game mechanics or content that players are intended to discover through gameplay.</p>
+<h2 id="t"><a class="header" href="#t">T</a></h2>
+<p><strong>Tile-based</strong>: Using graphical tiles instead of ASCII characters to represent game elements.</p>
+<p><strong>Turn-based</strong>: A system where the game state only changes when the player takes an action.</p>
+<h2 id="u"><a class="header" href="#u">U</a></h2>
+<p><strong>Unidentified item</strong>: An item whose properties are unknown until identified through use or magic.</p>
+<p><strong>Unexplored</strong>: Areas of the map that the player hasn't visited yet.</p>
+<h2 id="v"><a class="header" href="#v">V</a></h2>
+<p><strong>Vaults</strong>: Pre-designed room layouts inserted into procedurally generated levels.</p>
+<p><strong>Visible resistance</strong>: When a character's resistances to various effects are clearly displayed to the player.</p>
+<h2 id="w"><a class="header" href="#w">W</a></h2>
+<p><strong>Wand</strong>: A common magical item in roguelikes, often with limited charges.</p>
+<p><strong>World seed</strong>: A value used to initialize the random number generator, allowing for reproducible procedural generation.</p>
+<h2 id="y"><a class="header" href="#y">Y</a></h2>
+<p><strong>YASD</strong>: "Yet Another Stupid Death"; a term used when a player dies due to a mistake or unfortunate circumstance.</p>
+<p><strong>Yiuf</strong>: A unique monster in some roguelikes, known for its unpredictable and dangerous nature.</p>
+<h2 id="z"><a class="header" href="#z">Z</a></h2>
+<p><strong>Zap</strong>: To use a wand or cast a spell, often in a specific direction.</p>
+<p><strong>Zero HP</strong>: A common way to refer to character death in roguelikes.</p>
+<p>This glossary covers many common terms, but the roguelike genre is vast and ever-evolving. Players and developers often encounter game-specific terms not listed here. Always consult a game's documentation or community resources for the most accurate and up-to-date terminology.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="16.3.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="appendix-b.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="16.3.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="appendix-b.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

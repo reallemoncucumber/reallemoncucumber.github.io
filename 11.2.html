@@ -1,0 +1,341 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Chapter 11.2 - Mastering Roguelike Game Design: From Permadeath to Procedural Generation</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="0.roguelike-game-design-book-toc.html">Chapter 0</a></li><li class="chapter-item expanded affix "><a href="1.1.roguelike-definition-chapter.html">Chapter 1.1</a></li><li class="chapter-item expanded affix "><a href="1.2.roguelike-history-chapter.html">Chapter 1.2</a></li><li class="chapter-item expanded affix "><a href="1.3.roguelike-key-elements-chapter.html">Chapter 1.3</a></li><li class="chapter-item expanded affix "><a href="2.1.roguelike-permadeath-chapter.html">Chapter 2.1</a></li><li class="chapter-item expanded affix "><a href="2.2.roguelike-procedural-generation-chapter.html">Chapter 2.2</a></li><li class="chapter-item expanded affix "><a href="2.3.roguelike-turn-based-gameplay-chapter.html">Chapter 2.3</a></li><li class="chapter-item expanded affix "><a href="2.4.roguelike-grid-based-chapter.html">Chapter 2.4</a></li><li class="chapter-item expanded affix "><a href="2.5.roguelike-resource-management.html">Chapter 2.5</a></li><li class="chapter-item expanded affix "><a href="3.1.algorithms-for-dungeon-generation.html">Chapter 3.1</a></li><li class="chapter-item expanded affix "><a href="3.2.creating-balanced-and-interesting-levels.html">Chapter 3.2</a></li><li class="chapter-item expanded affix "><a href="3.3.generating-items-enemies-quests.html">Chapter 3.3</a></li><li class="chapter-item expanded affix "><a href="3.4.ensuring-fairness-in-randomized-content.html">Chapter 3.4</a></li><li class="chapter-item expanded affix "><a href="4.1.designing-character-classes-and-races.html">Chapter 4.1</a></li><li class="chapter-item expanded affix "><a href="4.2.expecience-points-and-leveling-mechanisms.html">Chapter 4.2</a></li><li class="chapter-item expanded affix "><a href="4.3.skill-trees-and-ability-unlocks.html">Chapter 4.3</a></li><li class="chapter-item expanded affix "><a href="4.4.balancing-character-growth-and-game-difficulty.html">Chapter 4.4</a></li><li class="chapter-item expanded affix "><a href="5.1.turn-based-combat-systems.html">Chapter 5.1</a></li><li class="chapter-item expanded affix "><a href="5.2.designing-diverse-and-challenging-enemies.html">Chapter 5.2</a></li><li class="chapter-item expanded affix "><a href="5.3.boss-fights-and-special-encounters.html">Chapter 5.3</a></li><li class="chapter-item expanded affix "><a href="5.4.balancing-combat-difficulty-and-player-skill.html">Chapter 5.4</a></li><li class="chapter-item expanded affix "><a href="6.1.roguelike-item-design-chapter.html">Chapter 6.1</a></li><li class="chapter-item expanded affix "><a href="6.2.roguelike-crafting-systems-chapter.html">Chapter 6.2</a></li><li class="chapter-item expanded affix "><a href="6.3.roguelike-currency-shop-mechanics-chapter.html">Chapter 6.3</a></li><li class="chapter-item expanded affix "><a href="6.4.roguelike-inventory-identification-chapter.html">Chapter 6.4</a></li><li class="chapter-item expanded affix "><a href="7.1.html">Chapter 7.1</a></li><li class="chapter-item expanded affix "><a href="7.2.html">Chapter 7.2</a></li><li class="chapter-item expanded affix "><a href="7.3.html">Chapter 7.3</a></li><li class="chapter-item expanded affix "><a href="7.4.html">Chapter 7.4</a></li><li class="chapter-item expanded affix "><a href="8.1.html">Chapter 8.1</a></li><li class="chapter-item expanded affix "><a href="8.2.html">Chapter 8.2</a></li><li class="chapter-item expanded affix "><a href="8.3.html">Chapter 8.3</a></li><li class="chapter-item expanded affix "><a href="8.4.html">Chapter 8.4</a></li><li class="chapter-item expanded affix "><a href="9.1.html">Chapter 9.1</a></li><li class="chapter-item expanded affix "><a href="9.2.html">Chapter 9.2</a></li><li class="chapter-item expanded affix "><a href="9.3.html">Chapter 9.3</a></li><li class="chapter-item expanded affix "><a href="9.4.html">Chapter 9.4</a></li><li class="chapter-item expanded affix "><a href="10.1.html">Chapter 10.1</a></li><li class="chapter-item expanded affix "><a href="10.2.html">Chapter 10.2</a></li><li class="chapter-item expanded affix "><a href="10.3.html">Chapter 10.3</a></li><li class="chapter-item expanded affix "><a href="10.4.html">Chapter 10.4</a></li><li class="chapter-item expanded affix "><a href="11.1.html">Chapter 11.1</a></li><li class="chapter-item expanded affix "><a href="11.2.html" class="active">Chapter 11.2</a></li><li class="chapter-item expanded affix "><a href="11.3.html">Chapter 11.3</a></li><li class="chapter-item expanded affix "><a href="11.4.html">Chapter 11.4</a></li><li class="chapter-item expanded affix "><a href="12.1.html">Chapter 12.1</a></li><li class="chapter-item expanded affix "><a href="12.2.html">Chapter 12.2</a></li><li class="chapter-item expanded affix "><a href="12.3.html">Chapter 12.3</a></li><li class="chapter-item expanded affix "><a href="12.4.html">Chapter 12.4</a></li><li class="chapter-item expanded affix "><a href="13.1.html">Chapter 13.1</a></li><li class="chapter-item expanded affix "><a href="13.2.html">Chapter 13.2</a></li><li class="chapter-item expanded affix "><a href="13.3.html">Chapter 13.3</a></li><li class="chapter-item expanded affix "><a href="13.4.html">Chapter 13.4</a></li><li class="chapter-item expanded affix "><a href="14.1.html">Chapter 14.1</a></li><li class="chapter-item expanded affix "><a href="14.2.html">Chapter 14.2</a></li><li class="chapter-item expanded affix "><a href="14.3.html">Chapter 14.3</a></li><li class="chapter-item expanded affix "><a href="14.4.html">Chapter 14.4</a></li><li class="chapter-item expanded affix "><a href="15.1.html">Chapter 15.1</a></li><li class="chapter-item expanded affix "><a href="15.2.html">Chapter 15.2</a></li><li class="chapter-item expanded affix "><a href="15.3.html">Chapter 15.3</a></li><li class="chapter-item expanded affix "><a href="15.4.html">Chapter 15.4</a></li><li class="chapter-item expanded affix "><a href="16.1.html">Chapter 16.1</a></li><li class="chapter-item expanded affix "><a href="16.2.html">Chapter 16.2</a></li><li class="chapter-item expanded affix "><a href="16.3.html">Chapter 16.3</a></li><li class="chapter-item expanded affix "><a href="appendix-a.html">Appendix a</a></li><li class="chapter-item expanded affix "><a href="appendix-b.html">Appendix b</a></li><li class="chapter-item expanded affix "><a href="appendix-c.html">Appendix c</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Mastering Roguelike Game Design: From Permadeath to Procedural Generation</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="112-optimizing-procedural-generation"><a class="header" href="#112-optimizing-procedural-generation">11.2 Optimizing Procedural Generation</a></h1>
+<p>Procedural generation is a cornerstone of roguelike game design, enabling infinite replayability and unique experiences. However, poorly optimized generation can lead to long load times, in-game lag, and excessive memory usage. This chapter explores techniques to optimize your procedural generation systems for better performance and player experience.</p>
+<h2 id="efficient-algorithms"><a class="header" href="#efficient-algorithms">Efficient Algorithms</a></h2>
+<h3 id="chunking"><a class="header" href="#chunking">Chunking</a></h3>
+<ul>
+<li>Divide the game world into manageable chunks</li>
+<li>Generate and load chunks as needed</li>
+<li>Unload distant chunks to conserve memory</li>
+</ul>
+<h3 id="noise-functions"><a class="header" href="#noise-functions">Noise Functions</a></h3>
+<ul>
+<li>Use fast noise algorithms like Simplex Noise instead of slower ones like Perlin Noise</li>
+<li>Implement multi-threaded noise generation for larger worlds</li>
+</ul>
+<h3 id="cellular-automata"><a class="header" href="#cellular-automata">Cellular Automata</a></h3>
+<ul>
+<li>Optimize rule sets for faster convergence</li>
+<li>Limit the number of iterations to balance quality and speed</li>
+</ul>
+<h2 id="data-structures"><a class="header" href="#data-structures">Data Structures</a></h2>
+<h3 id="spatial-partitioning"><a class="header" href="#spatial-partitioning">Spatial Partitioning</a></h3>
+<ul>
+<li>Implement quadtrees or octrees for efficient spatial queries</li>
+<li>Use these structures to optimize collision detection and AI pathfinding</li>
+</ul>
+<h3 id="seed-based-generation"><a class="header" href="#seed-based-generation">Seed-based Generation</a></h3>
+<ul>
+<li>Store only the seed and generation parameters instead of full layouts</li>
+<li>Regenerate areas on-demand to save memory</li>
+</ul>
+<h2 id="caching-and-precomputation"><a class="header" href="#caching-and-precomputation">Caching and Precomputation</a></h2>
+<h3 id="tile-caching"><a class="header" href="#tile-caching">Tile Caching</a></h3>
+<ul>
+<li>Pre-generate and cache commonly used tile configurations</li>
+<li>Use flyweight pattern for tile instances to reduce memory usage</li>
+</ul>
+<h3 id="precomputed-tables"><a class="header" href="#precomputed-tables">Precomputed Tables</a></h3>
+<ul>
+<li>Generate lookup tables for complex calculations</li>
+<li>Trade memory for speed in time-critical operations</li>
+</ul>
+<h2 id="multithreading-and-parallel-processing"><a class="header" href="#multithreading-and-parallel-processing">Multithreading and Parallel Processing</a></h2>
+<h3 id="background-generation"><a class="header" href="#background-generation">Background Generation</a></h3>
+<ul>
+<li>Offload generation tasks to background threads</li>
+<li>Implement a job system for distributing generation tasks</li>
+</ul>
+<h3 id="gpu-acceleration"><a class="header" href="#gpu-acceleration">GPU Acceleration</a></h3>
+<ul>
+<li>Utilize GPU for parallel processing of noise functions and cellular automata</li>
+<li>Implement compute shaders for complex calculations</li>
+</ul>
+<h2 id="level-of-detail-lod"><a class="header" href="#level-of-detail-lod">Level of Detail (LOD)</a></h2>
+<h3 id="progressive-generation"><a class="header" href="#progressive-generation">Progressive Generation</a></h3>
+<ul>
+<li>Generate rough outlines first, then add details as needed</li>
+<li>Implement different LODs based on player proximity or zoom level</li>
+</ul>
+<h3 id="procedural-imposters"><a class="header" href="#procedural-imposters">Procedural Imposters</a></h3>
+<ul>
+<li>Use simplified representations for distant or less important elements</li>
+<li>Dynamically adjust detail based on available resources</li>
+</ul>
+<h2 id="optimizing-specific-elements"><a class="header" href="#optimizing-specific-elements">Optimizing Specific Elements</a></h2>
+<h3 id="dungeon-generation"><a class="header" href="#dungeon-generation">Dungeon Generation</a></h3>
+<ul>
+<li>Implement room-first or corridor-first algorithms based on your game's needs</li>
+<li>Use templates for complex room structures to speed up generation</li>
+</ul>
+<h3 id="item-and-enemy-placement"><a class="header" href="#item-and-enemy-placement">Item and Enemy Placement</a></h3>
+<ul>
+<li>Use weighted random selection for faster distribution</li>
+<li>Implement constraint-based placement for balanced gameplay</li>
+</ul>
+<h3 id="world-map-generation"><a class="header" href="#world-map-generation">World Map Generation</a></h3>
+<ul>
+<li>Use multi-pass generation for different terrain features</li>
+<li>Implement river and road systems using efficient pathfinding algorithms</li>
+</ul>
+<h2 id="memory-management"><a class="header" href="#memory-management">Memory Management</a></h2>
+<h3 id="object-pooling"><a class="header" href="#object-pooling">Object Pooling</a></h3>
+<ul>
+<li>Reuse game objects instead of constant allocation/deallocation</li>
+<li>Implement pooling for frequently generated entities like projectiles or particles</li>
+</ul>
+<h3 id="streaming-content"><a class="header" href="#streaming-content">Streaming Content</a></h3>
+<ul>
+<li>Load and unload assets dynamically based on player location</li>
+<li>Implement asynchronous loading to prevent frame rate drops</li>
+</ul>
+<h2 id="profiling-and-optimization"><a class="header" href="#profiling-and-optimization">Profiling and Optimization</a></h2>
+<h3 id="performance-metrics"><a class="header" href="#performance-metrics">Performance Metrics</a></h3>
+<ul>
+<li>Implement in-game profiling tools to measure generation times</li>
+<li>Set performance budgets for different aspects of generation</li>
+</ul>
+<h3 id="incremental-improvements"><a class="header" href="#incremental-improvements">Incremental Improvements</a></h3>
+<ul>
+<li>Regularly profile and optimize your generation systems</li>
+<li>Focus on the most time-consuming or memory-intensive parts first</li>
+</ul>
+<h2 id="balancing-optimization-and-creativity"><a class="header" href="#balancing-optimization-and-creativity">Balancing Optimization and Creativity</a></h2>
+<h3 id="maintaining-variety"><a class="header" href="#maintaining-variety">Maintaining Variety</a></h3>
+<ul>
+<li>Ensure optimizations don't reduce the richness of generated content</li>
+<li>Implement systems that allow for emergent complexity from simple rules</li>
+</ul>
+<h3 id="debugging-and-iteration"><a class="header" href="#debugging-and-iteration">Debugging and Iteration</a></h3>
+<ul>
+<li>Develop tools for visualizing and debugging procedural generation</li>
+<li>Create systems for easily tweaking generation parameters</li>
+</ul>
+<h2 id="conclusion"><a class="header" href="#conclusion">Conclusion</a></h2>
+<p>Optimizing procedural generation is an ongoing process that requires a balance between performance and creativity. By implementing these techniques and continuously refining your systems, you can create roguelikes with vast, varied worlds that load quickly and run smoothly, enhancing the player's experience without sacrificing the depth and complexity that make roguelikes unique.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="11.1.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="11.3.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="11.1.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="11.3.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

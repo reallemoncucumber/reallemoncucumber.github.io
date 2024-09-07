@@ -1,0 +1,344 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Chapter 12.2 - Mastering Roguelike Game Design: From Permadeath to Procedural Generation</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="0.roguelike-game-design-book-toc.html">Chapter 0</a></li><li class="chapter-item expanded affix "><a href="1.1.roguelike-definition-chapter.html">Chapter 1.1</a></li><li class="chapter-item expanded affix "><a href="1.2.roguelike-history-chapter.html">Chapter 1.2</a></li><li class="chapter-item expanded affix "><a href="1.3.roguelike-key-elements-chapter.html">Chapter 1.3</a></li><li class="chapter-item expanded affix "><a href="2.1.roguelike-permadeath-chapter.html">Chapter 2.1</a></li><li class="chapter-item expanded affix "><a href="2.2.roguelike-procedural-generation-chapter.html">Chapter 2.2</a></li><li class="chapter-item expanded affix "><a href="2.3.roguelike-turn-based-gameplay-chapter.html">Chapter 2.3</a></li><li class="chapter-item expanded affix "><a href="2.4.roguelike-grid-based-chapter.html">Chapter 2.4</a></li><li class="chapter-item expanded affix "><a href="2.5.roguelike-resource-management.html">Chapter 2.5</a></li><li class="chapter-item expanded affix "><a href="3.1.algorithms-for-dungeon-generation.html">Chapter 3.1</a></li><li class="chapter-item expanded affix "><a href="3.2.creating-balanced-and-interesting-levels.html">Chapter 3.2</a></li><li class="chapter-item expanded affix "><a href="3.3.generating-items-enemies-quests.html">Chapter 3.3</a></li><li class="chapter-item expanded affix "><a href="3.4.ensuring-fairness-in-randomized-content.html">Chapter 3.4</a></li><li class="chapter-item expanded affix "><a href="4.1.designing-character-classes-and-races.html">Chapter 4.1</a></li><li class="chapter-item expanded affix "><a href="4.2.expecience-points-and-leveling-mechanisms.html">Chapter 4.2</a></li><li class="chapter-item expanded affix "><a href="4.3.skill-trees-and-ability-unlocks.html">Chapter 4.3</a></li><li class="chapter-item expanded affix "><a href="4.4.balancing-character-growth-and-game-difficulty.html">Chapter 4.4</a></li><li class="chapter-item expanded affix "><a href="5.1.turn-based-combat-systems.html">Chapter 5.1</a></li><li class="chapter-item expanded affix "><a href="5.2.designing-diverse-and-challenging-enemies.html">Chapter 5.2</a></li><li class="chapter-item expanded affix "><a href="5.3.boss-fights-and-special-encounters.html">Chapter 5.3</a></li><li class="chapter-item expanded affix "><a href="5.4.balancing-combat-difficulty-and-player-skill.html">Chapter 5.4</a></li><li class="chapter-item expanded affix "><a href="6.1.roguelike-item-design-chapter.html">Chapter 6.1</a></li><li class="chapter-item expanded affix "><a href="6.2.roguelike-crafting-systems-chapter.html">Chapter 6.2</a></li><li class="chapter-item expanded affix "><a href="6.3.roguelike-currency-shop-mechanics-chapter.html">Chapter 6.3</a></li><li class="chapter-item expanded affix "><a href="6.4.roguelike-inventory-identification-chapter.html">Chapter 6.4</a></li><li class="chapter-item expanded affix "><a href="7.1.html">Chapter 7.1</a></li><li class="chapter-item expanded affix "><a href="7.2.html">Chapter 7.2</a></li><li class="chapter-item expanded affix "><a href="7.3.html">Chapter 7.3</a></li><li class="chapter-item expanded affix "><a href="7.4.html">Chapter 7.4</a></li><li class="chapter-item expanded affix "><a href="8.1.html">Chapter 8.1</a></li><li class="chapter-item expanded affix "><a href="8.2.html">Chapter 8.2</a></li><li class="chapter-item expanded affix "><a href="8.3.html">Chapter 8.3</a></li><li class="chapter-item expanded affix "><a href="8.4.html">Chapter 8.4</a></li><li class="chapter-item expanded affix "><a href="9.1.html">Chapter 9.1</a></li><li class="chapter-item expanded affix "><a href="9.2.html">Chapter 9.2</a></li><li class="chapter-item expanded affix "><a href="9.3.html">Chapter 9.3</a></li><li class="chapter-item expanded affix "><a href="9.4.html">Chapter 9.4</a></li><li class="chapter-item expanded affix "><a href="10.1.html">Chapter 10.1</a></li><li class="chapter-item expanded affix "><a href="10.2.html">Chapter 10.2</a></li><li class="chapter-item expanded affix "><a href="10.3.html">Chapter 10.3</a></li><li class="chapter-item expanded affix "><a href="10.4.html">Chapter 10.4</a></li><li class="chapter-item expanded affix "><a href="11.1.html">Chapter 11.1</a></li><li class="chapter-item expanded affix "><a href="11.2.html">Chapter 11.2</a></li><li class="chapter-item expanded affix "><a href="11.3.html">Chapter 11.3</a></li><li class="chapter-item expanded affix "><a href="11.4.html">Chapter 11.4</a></li><li class="chapter-item expanded affix "><a href="12.1.html">Chapter 12.1</a></li><li class="chapter-item expanded affix "><a href="12.2.html" class="active">Chapter 12.2</a></li><li class="chapter-item expanded affix "><a href="12.3.html">Chapter 12.3</a></li><li class="chapter-item expanded affix "><a href="12.4.html">Chapter 12.4</a></li><li class="chapter-item expanded affix "><a href="13.1.html">Chapter 13.1</a></li><li class="chapter-item expanded affix "><a href="13.2.html">Chapter 13.2</a></li><li class="chapter-item expanded affix "><a href="13.3.html">Chapter 13.3</a></li><li class="chapter-item expanded affix "><a href="13.4.html">Chapter 13.4</a></li><li class="chapter-item expanded affix "><a href="14.1.html">Chapter 14.1</a></li><li class="chapter-item expanded affix "><a href="14.2.html">Chapter 14.2</a></li><li class="chapter-item expanded affix "><a href="14.3.html">Chapter 14.3</a></li><li class="chapter-item expanded affix "><a href="14.4.html">Chapter 14.4</a></li><li class="chapter-item expanded affix "><a href="15.1.html">Chapter 15.1</a></li><li class="chapter-item expanded affix "><a href="15.2.html">Chapter 15.2</a></li><li class="chapter-item expanded affix "><a href="15.3.html">Chapter 15.3</a></li><li class="chapter-item expanded affix "><a href="15.4.html">Chapter 15.4</a></li><li class="chapter-item expanded affix "><a href="16.1.html">Chapter 16.1</a></li><li class="chapter-item expanded affix "><a href="16.2.html">Chapter 16.2</a></li><li class="chapter-item expanded affix "><a href="16.3.html">Chapter 16.3</a></li><li class="chapter-item expanded affix "><a href="appendix-a.html">Appendix a</a></li><li class="chapter-item expanded affix "><a href="appendix-b.html">Appendix b</a></li><li class="chapter-item expanded affix "><a href="appendix-c.html">Appendix c</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Mastering Roguelike Game Design: From Permadeath to Procedural Generation</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="chapter-122-data-analysis-and-player-feedback"><a class="header" href="#chapter-122-data-analysis-and-player-feedback">Chapter 12.2: Data Analysis and Player Feedback</a></h1>
+<p>In roguelike development, gathering and interpreting data, along with understanding player feedback, are crucial for creating a balanced and engaging game. This chapter explores methods for collecting and analyzing game data, as well as strategies for effectively utilizing player feedback to improve your roguelike.</p>
+<h2 id="data-collection"><a class="header" href="#data-collection">Data Collection</a></h2>
+<h3 id="1-telemetry-systems"><a class="header" href="#1-telemetry-systems">1. Telemetry Systems</a></h3>
+<ul>
+<li>Implement robust telemetry to gather in-game data</li>
+<li>Track metrics such as:
+<ul>
+<li>Player deaths (location, cause, character level)</li>
+<li>Item usage and effectiveness</li>
+<li>Enemy encounter outcomes</li>
+<li>Run duration and success rate</li>
+<li>Character build choices</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-player-surveys"><a class="header" href="#2-player-surveys">2. Player Surveys</a></h3>
+<ul>
+<li>Design surveys to capture qualitative feedback</li>
+<li>Use a mix of rating scales and open-ended questions</li>
+<li>Focus on areas like game difficulty, enjoyment, and replayability</li>
+</ul>
+<h3 id="3-playtesting-sessions"><a class="header" href="#3-playtesting-sessions">3. Playtesting Sessions</a></h3>
+<ul>
+<li>Conduct observed playtesting sessions</li>
+<li>Record player actions, decisions, and verbal feedback</li>
+<li>Use screen capture and think-aloud protocols for deeper insights</li>
+</ul>
+<h2 id="data-analysis-techniques"><a class="header" href="#data-analysis-techniques">Data Analysis Techniques</a></h2>
+<h3 id="1-statistical-analysis"><a class="header" href="#1-statistical-analysis">1. Statistical Analysis</a></h3>
+<ul>
+<li>Calculate key performance indicators (KPIs) such as:
+<ul>
+<li>Average run length</li>
+<li>Win rate per character class</li>
+<li>Item pick-up and usage rates</li>
+</ul>
+</li>
+<li>Use statistical tests to identify significant patterns or imbalances</li>
+</ul>
+<h3 id="2-heat-maps"><a class="header" href="#2-heat-maps">2. Heat Maps</a></h3>
+<ul>
+<li>Generate heat maps to visualize:
+<ul>
+<li>Player death locations</li>
+<li>Popular pathfinding choices</li>
+<li>Item discovery hotspots</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-progression-curves"><a class="header" href="#3-progression-curves">3. Progression Curves</a></h3>
+<ul>
+<li>Plot player progression over time</li>
+<li>Analyze power spikes and difficulty curves</li>
+<li>Identify potential balance issues in the game's pacing</li>
+</ul>
+<h3 id="4-build-analysis"><a class="header" href="#4-build-analysis">4. Build Analysis</a></h3>
+<ul>
+<li>Examine successful character builds</li>
+<li>Identify underused or overpowered combinations</li>
+<li>Analyze the diversity of viable strategies</li>
+</ul>
+<h2 id="interpreting-player-feedback"><a class="header" href="#interpreting-player-feedback">Interpreting Player Feedback</a></h2>
+<h3 id="1-categorization"><a class="header" href="#1-categorization">1. Categorization</a></h3>
+<ul>
+<li>Organize feedback into categories (e.g., difficulty, UI, game mechanics)</li>
+<li>Prioritize issues based on frequency and severity</li>
+</ul>
+<h3 id="2-contextualizing-feedback"><a class="header" href="#2-contextualizing-feedback">2. Contextualizing Feedback</a></h3>
+<ul>
+<li>Consider the player's experience level and playstyle</li>
+<li>Look for patterns across different player segments</li>
+</ul>
+<h3 id="3-balancing-conflicting-feedback"><a class="header" href="#3-balancing-conflicting-feedback">3. Balancing Conflicting Feedback</a></h3>
+<ul>
+<li>Recognize that player opinions may contradict each other</li>
+<li>Aim to satisfy the target audience while staying true to the game's vision</li>
+</ul>
+<h2 id="acting-on-data-and-feedback"><a class="header" href="#acting-on-data-and-feedback">Acting on Data and Feedback</a></h2>
+<h3 id="1-iterative-design-process"><a class="header" href="#1-iterative-design-process">1. Iterative Design Process</a></h3>
+<ul>
+<li>Use data and feedback to inform regular game updates</li>
+<li>Implement changes gradually to assess their impact</li>
+</ul>
+<h3 id="2-ab-testing"><a class="header" href="#2-ab-testing">2. A/B Testing</a></h3>
+<ul>
+<li>Test significant changes with a subset of players</li>
+<li>Compare metrics between the control group and test group</li>
+</ul>
+<h3 id="3-community-communication"><a class="header" href="#3-community-communication">3. Community Communication</a></h3>
+<ul>
+<li>Share insights from data analysis with the player community</li>
+<li>Explain the reasoning behind major design decisions</li>
+</ul>
+<h3 id="4-long-term-tracking"><a class="header" href="#4-long-term-tracking">4. Long-term Tracking</a></h3>
+<ul>
+<li>Monitor the effects of changes over extended periods</li>
+<li>Be prepared to revert or further modify changes based on long-term data</li>
+</ul>
+<h2 id="challenges-in-roguelike-data-analysis"><a class="header" href="#challenges-in-roguelike-data-analysis">Challenges in Roguelike Data Analysis</a></h2>
+<h3 id="1-randomness-vs-skill"><a class="header" href="#1-randomness-vs-skill">1. Randomness vs. Skill</a></h3>
+<ul>
+<li>Differentiate between outcomes caused by random generation and player skill</li>
+<li>Use large sample sizes to mitigate the impact of randomness on data</li>
+</ul>
+<h3 id="2-diverse-playstyles"><a class="header" href="#2-diverse-playstyles">2. Diverse Playstyles</a></h3>
+<ul>
+<li>Account for varying player strategies and preferences</li>
+<li>Avoid over-optimizing for a single playstyle</li>
+</ul>
+<h3 id="3-balancing-complexity"><a class="header" href="#3-balancing-complexity">3. Balancing Complexity</a></h3>
+<ul>
+<li>Manage the intricate interactions between game systems</li>
+<li>Be cautious of unintended consequences when making balance adjustments</li>
+</ul>
+<h2 id="conclusion"><a class="header" href="#conclusion">Conclusion</a></h2>
+<p>Effective data analysis and utilization of player feedback are essential for refining and balancing a roguelike game. By implementing robust data collection systems, applying appropriate analysis techniques, and carefully interpreting player feedback, developers can create roguelikes that are both challenging and fair. Remember that this process is ongoing – the nature of roguelikes demands constant attention to balance and player experience.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="12.1.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="12.3.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="12.1.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="12.3.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
