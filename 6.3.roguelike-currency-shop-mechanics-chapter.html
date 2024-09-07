@@ -1,0 +1,415 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Chapter 6.3 - Mastering Roguelike Game Design: From Permadeath to Procedural Generation</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="0.roguelike-game-design-book-toc.html">Chapter 0</a></li><li class="chapter-item expanded affix "><a href="1.1.roguelike-definition-chapter.html">Chapter 1.1</a></li><li class="chapter-item expanded affix "><a href="1.2.roguelike-history-chapter.html">Chapter 1.2</a></li><li class="chapter-item expanded affix "><a href="1.3.roguelike-key-elements-chapter.html">Chapter 1.3</a></li><li class="chapter-item expanded affix "><a href="2.1.roguelike-permadeath-chapter.html">Chapter 2.1</a></li><li class="chapter-item expanded affix "><a href="2.2.roguelike-procedural-generation-chapter.html">Chapter 2.2</a></li><li class="chapter-item expanded affix "><a href="2.3.roguelike-turn-based-gameplay-chapter.html">Chapter 2.3</a></li><li class="chapter-item expanded affix "><a href="2.4.roguelike-grid-based-chapter.html">Chapter 2.4</a></li><li class="chapter-item expanded affix "><a href="2.5.roguelike-resource-management.html">Chapter 2.5</a></li><li class="chapter-item expanded affix "><a href="3.1.algorithms-for-dungeon-generation.html">Chapter 3.1</a></li><li class="chapter-item expanded affix "><a href="3.2.creating-balanced-and-interesting-levels.html">Chapter 3.2</a></li><li class="chapter-item expanded affix "><a href="3.3.generating-items-enemies-quests.html">Chapter 3.3</a></li><li class="chapter-item expanded affix "><a href="3.4.ensuring-fairness-in-randomized-content.html">Chapter 3.4</a></li><li class="chapter-item expanded affix "><a href="4.1.designing-character-classes-and-races.html">Chapter 4.1</a></li><li class="chapter-item expanded affix "><a href="4.2.expecience-points-and-leveling-mechanisms.html">Chapter 4.2</a></li><li class="chapter-item expanded affix "><a href="4.3.skill-trees-and-ability-unlocks.html">Chapter 4.3</a></li><li class="chapter-item expanded affix "><a href="4.4.balancing-character-growth-and-game-difficulty.html">Chapter 4.4</a></li><li class="chapter-item expanded affix "><a href="5.1.turn-based-combat-systems.html">Chapter 5.1</a></li><li class="chapter-item expanded affix "><a href="5.2.designing-diverse-and-challenging-enemies.html">Chapter 5.2</a></li><li class="chapter-item expanded affix "><a href="5.3.boss-fights-and-special-encounters.html">Chapter 5.3</a></li><li class="chapter-item expanded affix "><a href="5.4.balancing-combat-difficulty-and-player-skill.html">Chapter 5.4</a></li><li class="chapter-item expanded affix "><a href="6.1.roguelike-item-design-chapter.html">Chapter 6.1</a></li><li class="chapter-item expanded affix "><a href="6.2.roguelike-crafting-systems-chapter.html">Chapter 6.2</a></li><li class="chapter-item expanded affix "><a href="6.3.roguelike-currency-shop-mechanics-chapter.html" class="active">Chapter 6.3</a></li><li class="chapter-item expanded affix "><a href="6.4.roguelike-inventory-identification-chapter.html">Chapter 6.4</a></li><li class="chapter-item expanded affix "><a href="7.1.roguelike-story-gameplay-balance.html">Chapter 7.1</a></li><li class="chapter-item expanded affix "><a href="7.2.roguelike-environmental-storytelling.html">Chapter 7.2</a></li><li class="chapter-item expanded affix "><a href="7.3.roguelike-quests-chapter.html">Chapter 7.3</a></li><li class="chapter-item expanded affix "><a href="7.4.roguelike-lore-chapter.html">Chapter 7.4</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Mastering Roguelike Game Design: From Permadeath to Procedural Generation</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="63-currency-and-shop-mechanics"><a class="header" href="#63-currency-and-shop-mechanics">6.3 Currency and Shop Mechanics</a></h1>
+<p>Currency systems and shops play a crucial role in many roguelike games, offering players additional choices and progression paths. This chapter explores how to design and implement effective currency and shop mechanics that enhance the roguelike experience.</p>
+<h2 id="currency-design"><a class="header" href="#currency-design">Currency Design</a></h2>
+<ol>
+<li>
+<p><strong>Types of Currency</strong>:</p>
+<ul>
+<li>Standard currency (e.g., gold, credits)</li>
+<li>Special currencies (e.g., souls, blood tokens)</li>
+<li>Meta-currencies for between-run progression</li>
+</ul>
+</li>
+<li>
+<p><strong>Acquisition Methods</strong>:</p>
+<ul>
+<li>Enemy drops and loot</li>
+<li>Environmental sources</li>
+<li>Rewards for completing objectives</li>
+<li>Selling items or resources</li>
+</ul>
+</li>
+<li>
+<p><strong>Currency Balance</strong>:</p>
+<ul>
+<li>Scaling currency drops with game progression</li>
+<li>Balancing currency against item power and availability</li>
+<li>Creating currency sinks to maintain economy balance</li>
+</ul>
+</li>
+</ol>
+<h2 id="shop-systems"><a class="header" href="#shop-systems">Shop Systems</a></h2>
+<ol>
+<li>
+<p><strong>Shop Types</strong>:</p>
+<ul>
+<li>Standard merchants</li>
+<li>Black markets with powerful but risky items</li>
+<li>Specialty shops (e.g., potion shops, weapon smiths)</li>
+<li>Meta-progression shops between runs</li>
+</ul>
+</li>
+<li>
+<p><strong>Shop Generation</strong>:</p>
+<ul>
+<li>Procedural generation of shop inventories</li>
+<li>Balancing randomness with player needs</li>
+<li>Scaling shop offerings with game progression</li>
+</ul>
+</li>
+<li>
+<p><strong>Pricing Mechanics</strong>:</p>
+<ul>
+<li>Dynamic pricing based on item rarity and power</li>
+<li>Haggling or bargaining systems</li>
+<li>Discounts or price increases based on player actions or status</li>
+</ul>
+</li>
+</ol>
+<h2 id="integration-with-game-mechanics"><a class="header" href="#integration-with-game-mechanics">Integration with Game Mechanics</a></h2>
+<ol>
+<li>
+<p><strong>Risk vs. Reward</strong>:</p>
+<ul>
+<li>Creating meaningful choices between spending and saving</li>
+<li>Implementing shops with limited inventory or visit opportunities</li>
+</ul>
+</li>
+<li>
+<p><strong>Character Progression</strong>:</p>
+<ul>
+<li>Tying shop access or prices to character stats or abilities</li>
+<li>Offering unique upgrades or abilities through shops</li>
+</ul>
+</li>
+<li>
+<p><strong>World Building</strong>:</p>
+<ul>
+<li>Using shops and currencies to enhance the game's lore and atmosphere</li>
+<li>Creating unique shopkeeper characters or factions</li>
+</ul>
+</li>
+</ol>
+<h2 id="advanced-shop-mechanics"><a class="header" href="#advanced-shop-mechanics">Advanced Shop Mechanics</a></h2>
+<ol>
+<li>
+<p><strong>Trading Systems</strong>:</p>
+<ul>
+<li>Allowing players to sell or trade items</li>
+<li>Implementing barter systems for non-currency exchanges</li>
+</ul>
+</li>
+<li>
+<p><strong>Shop Quests and Relationships</strong>:</p>
+<ul>
+<li>Offering quests or challenges from shopkeepers</li>
+<li>Developing reputation systems that affect prices or item availability</li>
+</ul>
+</li>
+<li>
+<p><strong>Temporary Shops</strong>:</p>
+<ul>
+<li>Designing limited-time or single-use shops</li>
+<li>Creating risk/reward scenarios for accessing special shops</li>
+</ul>
+</li>
+</ol>
+<h2 id="currency-as-a-game-mechanic"><a class="header" href="#currency-as-a-game-mechanic">Currency as a Game Mechanic</a></h2>
+<ol>
+<li>
+<p><strong>Dual-Purpose Currency</strong>:</p>
+<ul>
+<li>Using currency as a resource for abilities or upgrades</li>
+<li>Implementing health-as-currency systems</li>
+</ul>
+</li>
+<li>
+<p><strong>Currency Transformation</strong>:</p>
+<ul>
+<li>Allowing players to convert between different currency types</li>
+<li>Creating interesting decisions around currency management</li>
+</ul>
+</li>
+<li>
+<p><strong>Cursed or Blessed Currency</strong>:</p>
+<ul>
+<li>Implementing special currency that affects gameplay (e.g., attracts monsters, grants temporary buffs)</li>
+</ul>
+</li>
+</ol>
+<h2 id="ui-and-ux-considerations"><a class="header" href="#ui-and-ux-considerations">UI and UX Considerations</a></h2>
+<ol>
+<li>
+<p><strong>Shop Interfaces</strong>:</p>
+<ul>
+<li>Designing clear and intuitive shop menus</li>
+<li>Providing relevant information about items and currencies</li>
+</ul>
+</li>
+<li>
+<p><strong>Currency Display</strong>:</p>
+<ul>
+<li>Creating clear visual indicators for different currency types</li>
+<li>Implementing satisfying feedback for currency gains and spending</li>
+</ul>
+</li>
+</ol>
+<h2 id="balancing-and-iteration"><a class="header" href="#balancing-and-iteration">Balancing and Iteration</a></h2>
+<ol>
+<li>
+<p><strong>Economy Monitoring</strong>:</p>
+<ul>
+<li>Tracking player spending habits and currency accumulation</li>
+<li>Adjusting currency flow and item prices based on data</li>
+</ul>
+</li>
+<li>
+<p><strong>Playtesting Strategies</strong>:</p>
+<ul>
+<li>Testing for exploits and balance issues</li>
+<li>Gathering player feedback on shop frequency and usefulness</li>
+</ul>
+</li>
+<li>
+<p><strong>Post-Launch Support</strong>:</p>
+<ul>
+<li>Planning for the addition of new currencies or shop types</li>
+<li>Balancing the economy with the introduction of new content</li>
+</ul>
+</li>
+</ol>
+<h2 id="ethical-considerations"><a class="header" href="#ethical-considerations">Ethical Considerations</a></h2>
+<ol>
+<li>
+<p><strong>In-Game Purchases</strong>:</p>
+<ul>
+<li>Discussing the implications of real-money transactions in roguelikes</li>
+<li>Balancing free and premium currencies (if applicable)</li>
+</ul>
+</li>
+<li>
+<p><strong>Gambling Mechanics</strong>:</p>
+<ul>
+<li>Considering the ethical implications of randomized purchases</li>
+<li>Implementing safeguards against excessive spending</li>
+</ul>
+</li>
+</ol>
+<p>By carefully designing and implementing currency and shop mechanics, you can create a compelling economic system that enhances player choice, supports multiple strategies, and adds depth to your roguelike game. Remember to balance these systems with the core roguelike principles of randomness, permadeath, and replayability to create a cohesive and engaging player experience.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="6.2.roguelike-crafting-systems-chapter.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="6.4.roguelike-inventory-identification-chapter.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="6.2.roguelike-crafting-systems-chapter.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="6.4.roguelike-inventory-identification-chapter.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
