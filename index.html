@@ -2,12 +2,12 @@
 <html lang="en-us">
 
 <head>
-    <title>whisper.cpp : WASM example</title>
+    <title>whisper.cpp : WASM example with Phaser.js</title>
 
     <style>
         #output {
             width: 100%;
-            height: 100%;
+            height: 200px;
             margin: 0 auto;
             margin-top: 10px;
             border-left: 0px;
@@ -35,18 +35,24 @@
             margin-left: 10px;
         }
 
+        #game-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
         body {
             outline: none;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
     <script src="enable-threads.js"></script>
     <link rel="icon" href="data:,">
 </head>
 
 <body tabindex="0">
     <div id="main-container">
-        <b>Minimal <a href="https://github.com/ggerganov/whisper.cpp">whisper.cpp</a> example running fully in the
-            browser</b>
+        <b>Minimal <a href="https://github.com/ggerganov/whisper.cpp">whisper.cpp</a> example with Phaser.js visualization</b>
 
         <br><br>
 
@@ -54,22 +60,17 @@
         <ul>
             <li>The tiny.en model will load automatically (31 MB)</li>
             <li>Hold SPACEBAR to record and auto-transcribe</li>
-            <li>Microphone recordings will transcribe automatically when you release SPACEBAR</li>
+            <li>Transcribed text will appear in the center of the canvas below</li>
+            <li>Text resets with each new recording</li>
         </ul>
 
-        Note that the computation is quite heavy and may take a few seconds to complete.<br>
-        The transcription results will be displayed in the text area below.<br><br>
+        Note that the computation is quite heavy and may take a few seconds to complete.<br><br>
         <b>Important:</b>
         <ul>
             <li>your browser must support WASM SIMD instructions for this to work</li>
             <li>Firefox cannot load files larger than 256 MB - use Chrome instead</li>
             <li>When using microphone: hold SPACEBAR to record, release to stop</li>
         </ul>
-
-        <b>More examples:</b>
-        <a href="bench.wasm/">bench</a> |
-        <a href="stream.wasm">stream</a> |
-        <a href="command.wasm/">command</a> |
 
         <hr>
 
@@ -90,12 +91,9 @@
             </div>
         </div>
 
-        <audio controls="controls" id="audio" loop hidden>
-            Your browser does not support the &lt;audio&gt; tag.
-            <source id="source" src="" type="audio/wav" />
-        </audio>
-
         <hr><br>
+
+        <div id="game-container"></div>
 
         <table>
             <tr>
@@ -178,7 +176,7 @@
 
         <br>
 
-        <textarea id="output" rows="20"></textarea>
+        <textarea id="output" rows="10"></textarea>
 
         <br><br>
 
@@ -198,11 +196,131 @@
 
     <script type="text/javascript" src="helpers.js"></script>
     <script type='text/javascript'>
+        var game;
+        var transcriptionText;
+        var currentTranscription = '';
+
+        class TranscriptionScene extends Phaser.Scene {
+            constructor() {
+                super({ key: 'TranscriptionScene' });
+            }
+
+            preload() {
+            }
+
+            create() {
+                console.log('Phaser scene created');
+                this.add.rectangle(400, 300, 800, 600, 0x000033);
+                
+                this.add.text(400, 50, 'Whisper.cpp Live Transcription', {
+                    fontSize: '24px',
+                    fill: '#ffffff',
+                    fontFamily: 'Arial, sans-serif'
+                }).setOrigin(0.5);
+
+                this.add.text(400, 100, 'Hold SPACEBAR to record', {
+                    fontSize: '16px',
+                    fill: '#cccccc',
+                    fontFamily: 'Arial, sans-serif'
+                }).setOrigin(0.5);
+
+                transcriptionText = this.add.text(400, 300, 'Ready to transcribe...', {
+                    fontSize: '20px',
+                    fill: '#00ff00',
+                    fontFamily: 'Arial, sans-serif',
+                    align: 'center',
+                    wordWrap: { width: 750, useAdvancedWrap: true }
+                }).setOrigin(0.5);
+
+                console.log('Transcription text object created:', transcriptionText);
+
+                this.recordingIndicator = this.add.circle(400, 550, 20, 0xff0000);
+                this.recordingIndicator.setVisible(false);
+
+                this.recordingText = this.add.text(400, 520, 'RECORDING', {
+                    fontSize: '16px',
+                    fill: '#ff0000',
+                    fontFamily: 'Arial, sans-serif'
+                }).setOrigin(0.5);
+                this.recordingText.setVisible(false);
+
+                // Test the transcription display
+                window.testTranscription = function(text) {
+                    updateTranscriptionDisplay(text || 'Test transcription text');
+                };
+            }
+
+            update() {
+                if (doRecording) {
+                    this.recordingIndicator.setVisible(true);
+                    this.recordingText.setVisible(true);
+                    this.recordingIndicator.setScale(0.8 + Math.sin(this.time.now * 0.01) * 0.2);
+                } else {
+                    this.recordingIndicator.setVisible(false);
+                    this.recordingText.setVisible(false);
+                }
+            }
+        }
+
+        function initPhaser() {
+            const config = {
+                type: Phaser.AUTO,
+                width: 800,
+                height: 600,
+                parent: 'game-container',
+                backgroundColor: '#000033',
+                scene: TranscriptionScene
+            };
+
+            game = new Phaser.Game(config);
+        }
+
+        function cleanTranscriptionText(text) {
+            // Remove timestamp prefix like [00:00:00.000 --> 00:00:02.000]
+            return text.replace(/\[\d{2}:\d{2}:\d{2}\.\d{3}\s*-->\s*\d{2}:\d{2}:\d{2}\.\d{3}\]\s*/g, '').trim();
+        }
+
+        function updateTranscriptionDisplay(text) {
+            console.log('Updating transcription display with:', text);
+            const cleanedText = cleanTranscriptionText(text);
+            console.log('Cleaned text:', cleanedText);
+            currentTranscription = cleanedText;
+            if (transcriptionText) {
+                transcriptionText.setText(cleanedText);
+                console.log('Transcription text updated in Phaser');
+            } else {
+                console.log('Warning: transcriptionText object not found');
+            }
+        }
+
+        function clearTranscriptionDisplay() {
+            console.log('Clearing transcription display');
+            currentTranscription = '';
+            if (transcriptionText) {
+                transcriptionText.setText('');
+            }
+        }
+
         function setAudio(audio) {
         }
 
         var Module = {
-            print: printTextarea,
+            print: function(text) {
+                printTextarea(text);
+                
+                // Check for various whisper output patterns
+                if (text.includes('whisper returned:')) {
+                    const transcribedText = text.replace(/.*whisper returned:\s*/, '').trim();
+                    if (transcribedText && transcribedText !== 'undefined' && transcribedText !== '') {
+                        updateTranscriptionDisplay(transcribedText);
+                    }
+                } else if (text.trim() && !text.includes('js:') && !text.includes('processing') && 
+                          !text.includes('audio') && !text.includes('storeFS') && 
+                          !text.includes('whisper initialized') && text.length > 10) {
+                    // Fallback: if it's substantial text that doesn't look like debug output
+                    updateTranscriptionDisplay(text.trim());
+                }
+            },
             printErr: printTextarea,
             setStatus: function (text) {
                 printTextarea('js: ' + text);
@@ -271,6 +389,8 @@
 
         function startRecording() {
             if (doRecording) return;
+
+            clearTranscriptionDisplay();
 
             if (!context) {
                 context = new AudioContext({
@@ -447,14 +567,23 @@
                 setTimeout(function () {
                     var ret = Module.full_default(instance, audio, document.getElementById('language').value, nthreads, false);
                     console.log('js: full_default returned: ' + ret);
+                    
                     if (ret) {
                         printTextarea("js: whisper returned: " + ret);
+                        
+                        // Direct update to Phaser display
+                        if (typeof ret === 'string' && ret.trim() && ret !== 'undefined') {
+                            updateTranscriptionDisplay(ret.trim());
+                        }
+                    } else {
+                        updateTranscriptionDisplay("No transcription result");
                     }
                 }, 100);
             }
         }
 
         window.addEventListener('load', function () {
+            initPhaser();
             loadWhisperModel();
             document.body.focus();
         });
