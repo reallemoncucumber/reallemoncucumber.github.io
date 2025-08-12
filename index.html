@@ -53,8 +53,7 @@
         Usage instructions:<br>
         <ul>
             <li>The tiny.en model will load automatically (31 MB)</li>
-            <li>Select audio file and click "Transcribe", or hold SPACEBAR to record and auto-transcribe (sample: <a
-                    href="https://whisper.ggerganov.com/jfk.wav">jfk.wav</a>)</li>
+            <li>Hold SPACEBAR to record and auto-transcribe</li>
             <li>Microphone recordings will transcribe automatically when you release SPACEBAR</li>
         </ul>
 
@@ -81,22 +80,7 @@
 
         <br>
 
-        <div id="input">
-            Input:
-            <input type="radio" id="file" name="input" value="file" checked="checked" onchange="changeInput('file')" />
-            <label for="file">File</label>
-            <input type="radio" id="mic" name="input" value="mic" onchange="changeInput('mic')" /> <label
-                for="mic">Microphone</label>
-        </div>
-
-        <br>
-
-        <div id="input_file">
-            Audio file:
-            <input type="file" id="file" name="file" onchange="loadAudio(event)" />
-        </div>
-
-        <div id="input_mic" style="display: none;">
+        <div id="input_mic">
             Microphone: <span id="recording-status">Hold SPACEBAR to record</span>
 
             <br><br>
@@ -217,16 +201,6 @@
         function setAudio(audio) {
         }
 
-        function changeInput(input) {
-            if (input == 'file') {
-                document.getElementById('input_file').style.display = 'block';
-                document.getElementById('input_mic').style.display = 'none';
-            } else {
-                document.getElementById('input_file').style.display = 'none';
-                document.getElementById('input_mic').style.display = 'block';
-            }
-        }
-
         var Module = {
             print: printTextarea,
             printErr: printTextarea,
@@ -289,56 +263,6 @@
 
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         window.OfflineAudioContext = window.OfflineAudioContext || window.webkitOfflineAudioContext;
-
-        function loadAudio(event) {
-            if (!context) {
-                context = new AudioContext({
-                    sampleRate: kSampleRate,
-                    channelCount: 1,
-                    echoCancellation: false,
-                    autoGainControl: true,
-                    noiseSuppression: true,
-                });
-            }
-
-            var file = event.target.files[0] || null;
-            if (file == null) {
-                return;
-            }
-
-            printTextarea('js: loading audio: ' + file.name + ', size: ' + file.size + ' bytes');
-            printTextarea('js: please wait ...');
-
-            var reader = new FileReader();
-            reader.onload = function (event) {
-                var buf = new Uint8Array(reader.result);
-
-                context.decodeAudioData(buf.buffer, function (audioBuffer) {
-                    var offlineContext = new OfflineAudioContext(audioBuffer.numberOfChannels, audioBuffer.length, audioBuffer.sampleRate);
-                    var source = offlineContext.createBufferSource();
-                    source.buffer = audioBuffer;
-                    source.connect(offlineContext.destination);
-                    source.start(0);
-
-                    offlineContext.startRendering().then(function (renderedBuffer) {
-                        audio = renderedBuffer.getChannelData(0);
-                        printTextarea('js: audio loaded, size: ' + audio.length);
-
-                        if (audio.length > kMaxAudio_s * kSampleRate) {
-                            audio = audio.slice(0, kMaxAudio_s * kSampleRate);
-                            printTextarea('js: truncated audio to first ' + kMaxAudio_s + ' seconds');
-                        }
-
-                        setAudio(audio);
-                    });
-                }, function (e) {
-                    printTextarea('js: error decoding audio: ' + e);
-                    audio = null;
-                    setAudio(audio);
-                });
-            }
-            reader.readAsArrayBuffer(file);
-        }
 
         var mediaRecorder = null;
         var doRecording = false;
@@ -476,9 +400,7 @@
             if (event.code === 'Space' && !isSpacePressed) {
                 event.preventDefault();
                 isSpacePressed = true;
-                if (document.querySelector('input[name="input"]:checked').value === 'mic') {
-                    startRecording();
-                }
+                startRecording();
             }
         });
 
