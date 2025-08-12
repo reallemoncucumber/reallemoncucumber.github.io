@@ -23,11 +23,23 @@
                 overflow-wrap: normal;
                 overflow-x: scroll;
             }
+            #recording-status {
+                font-weight: bold;
+                font-size: 14px;
+                padding: 5px;
+                border-radius: 3px;
+                background-color: #f0f0f0;
+                display: inline-block;
+                margin-left: 10px;
+            }
+            body {
+                outline: none;
+            }
         </style>
         <script src="coi-serviceworker.js"></script>
         <link rel="icon" href="data:,">
     </head>
-    <body>
+    <body tabindex="0">
         <div id="main-container">
             <b>Minimal <a href="https://github.com/ggerganov/whisper.cpp">whisper.cpp</a> example running fully in the browser</b>
 
@@ -36,8 +48,8 @@
             Usage instructions:<br>
             <ul>
                 <li>The tiny.en model will load automatically (31 MB)</li>
-                <li>Select audio file to transcribe or record audio from the microphone (sample: <a href="https://whisper.ggerganov.com/jfk.wav">jfk.wav</a>)</li>
-                <li>Click on the "Transcribe" button to start the transcription</li>
+                <li>Select audio file and click "Transcribe", or hold SPACEBAR to record and auto-transcribe (sample: <a href="https://whisper.ggerganov.com/jfk.wav">jfk.wav</a>)</li>
+                <li>Microphone recordings will transcribe automatically when you release SPACEBAR</li>
             </ul>
 
             Note that the computation is quite heavy and may take a few seconds to complete.<br>
@@ -46,6 +58,7 @@
                 <ul>
                     <li>your browser must support WASM SIMD instructions for this to work</li>
                     <li>Firefox cannot load files larger than 256 MB - use Chrome instead</li>
+                    <li>When using microphone: hold SPACEBAR to record, release to stop</li>
                 </ul>
 
             <b>More examples:</b>
@@ -76,9 +89,7 @@
             </div>
 
             <div id="input_mic" style="display: none;">
-                Microphone:
-                <button id="start" onclick="startRecording()">Start</button>
-                <button id="stop" onclick="stopRecording()" disabled>Stop</button>
+                Microphone: <span id="recording-status">Hold SPACEBAR to record</span>
 
                 <br><br>
                 <div id="progress" style="display: none;">
@@ -167,10 +178,7 @@
                         <span id="threads-value">8</span>
                     </td>
                     <td>
-                        <button onclick="onProcess(false);">Transcribe</button>
-                    </td>
-                    <td>
-                        <button onclick="onProcess(true);">Translate</button>
+                        <button onclick="onProcess();">Transcribe</button>
                     </td>
                 </tr>
             </table>
@@ -201,11 +209,9 @@
                 if (input == 'file') {
                     document.getElementById('input_file').style.display = 'block';
                     document.getElementById('input_mic' ).style.display = 'none';
-                    document.getElementById('progress'  ).style.display = 'none';
                 } else {
                     document.getElementById('input_file').style.display = 'none';
                     document.getElementById('input_mic' ).style.display = 'block';
-                    document.getElementById('progress'  ).style.display = 'block';
                 }
             }
 
@@ -325,12 +331,11 @@
             var mediaRecorder = null;
             var doRecording = false;
             var startTime = 0;
-
-            function stopRecording() {
-                doRecording = false;
-            }
+            var isSpacePressed = false;
 
             function startRecording() {
+                if (doRecording) return;
+                
                 if (!context) {
                     context = new AudioContext({
                         sampleRate: kSampleRate,
@@ -341,9 +346,9 @@
                     });
                 }
 
-                document.getElementById('start').disabled = true;
-                document.getElementById('stop').disabled = false;
-
+                document.getElementById('recording-status').innerHTML = 'Recording...';
+                document.getElementById('recording-status').style.color = '#ff4444';
+                document.getElementById('progress').style.display = 'block';
                 document.getElementById('progress-bar').style.width = '0%';
                 document.getElementById('progress-text').innerHTML = '0%';
 
@@ -364,8 +369,9 @@
                             var blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
                             chunks = [];
 
-                            document.getElementById('start').disabled = false;
-                            document.getElementById('stop').disabled = true;
+                            document.getElementById('recording-status').innerHTML = 'Hold SPACEBAR to record';
+                            document.getElementById('recording-status').style.color = '';
+                            document.getElementById('progress').style.display = 'none';
 
                             var reader = new FileReader();
                             reader.onload = function(event) {
@@ -387,6 +393,18 @@
                                             printTextarea('js: truncated audio to first ' + kMaxRecording_s + ' seconds');
                                         }
                                         setAudio(audio);
+                                        
+                                        document.getElementById('recording-status').innerHTML = 'Transcribing...';
+                                        document.getElementById('recording-status').style.color = '#4CAF50';
+                                        
+                                        setTimeout(function() {
+                                            onProcess();
+                                            
+                                            setTimeout(function() {
+                                                document.getElementById('recording-status').innerHTML = 'Hold SPACEBAR to record';
+                                                document.getElementById('recording-status').style.color = '';
+                                            }, 1000);
+                                        }, 100);
                                     });
                                 }, function(e) {
                                     printTextarea('js: error decoding audio: ' + e);
@@ -401,30 +419,64 @@
                     })
                     .catch(function(err) {
                         printTextarea('js: error getting audio stream: ' + err);
+                        doRecording = false;
+                        document.getElementById('recording-status').innerHTML = 'Error: ' + err.message;
+                        document.getElementById('recording-status').style.color = '#ff4444';
                     });
 
                 var interval = setInterval(function() {
-                    if (!doRecording) {
+                    if (!doRecording || !isSpacePressed) {
                         clearInterval(interval);
-                        mediaRecorder.stop();
-                        stream.getTracks().forEach(function(track) {
-                            track.stop();
-                        });
+                        if (mediaRecorder && mediaRecorder.state === 'recording') {
+                            mediaRecorder.stop();
+                        }
+                        if (stream) {
+                            stream.getTracks().forEach(function(track) {
+                                track.stop();
+                            });
+                        }
+                        return;
                     }
 
-                    document.getElementById('progress-bar').style.width = (100*(Date.now() - startTime)/1000/kMaxRecording_s) + '%';
-                    document.getElementById('progress-text').innerHTML = (100*(Date.now() - startTime)/1000/kMaxRecording_s).toFixed(0) + '%';
-                }, 1000);
-
-                printTextarea('js: recording ...');
-
-                setTimeout(function() {
-                    if (doRecording) {
+                    var elapsed = (Date.now() - startTime) / 1000;
+                    document.getElementById('progress-bar').style.width = (100 * elapsed / kMaxRecording_s) + '%';
+                    document.getElementById('progress-text').innerHTML = elapsed.toFixed(1) + 's';
+                    
+                    if (elapsed >= kMaxRecording_s) {
                         printTextarea('js: recording stopped after ' + kMaxRecording_s + ' seconds');
                         stopRecording();
                     }
-                }, kMaxRecording_s*1000);
+                }, 100);
+
+                printTextarea('js: recording ...');
             }
+
+            function stopRecording() {
+                if (!doRecording) return;
+                doRecording = false;
+                
+                if (mediaRecorder && mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop();
+                }
+            }
+
+            document.addEventListener('keydown', function(event) {
+                if (event.code === 'Space' && !isSpacePressed) {
+                    event.preventDefault();
+                    isSpacePressed = true;
+                    if (document.querySelector('input[name="input"]:checked').value === 'mic') {
+                        startRecording();
+                    }
+                }
+            });
+
+            document.addEventListener('keyup', function(event) {
+                if (event.code === 'Space' && isSpacePressed) {
+                    event.preventDefault();
+                    isSpacePressed = false;
+                    stopRecording();
+                }
+            });
 
             var nthreads = 8;
 
@@ -433,7 +485,7 @@
                 document.getElementById('threads-value').innerHTML = nthreads;
             }
 
-            function onProcess(translate) {
+            function onProcess() {
                 if (!instance) {
                     instance = Module.init('whisper.bin');
 
@@ -459,7 +511,7 @@
                     printTextarea('');
 
                     setTimeout(function() {
-                        var ret = Module.full_default(instance, audio, document.getElementById('language').value, nthreads, translate);
+                        var ret = Module.full_default(instance, audio, document.getElementById('language').value, nthreads, false);
                         console.log('js: full_default returned: ' + ret);
                         if (ret) {
                             printTextarea("js: whisper returned: " + ret);
@@ -470,6 +522,7 @@
 
             window.addEventListener('load', function() {
                 loadWhisperModel();
+                document.body.focus();
             });
         </script>
         <script type="text/javascript" src="main.js"></script>
