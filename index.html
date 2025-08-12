@@ -1,376 +1,658 @@
-<!DOCTYPE HTML>
-<html lang="en" class="light" dir="ltr">
+<!doctype html>
+<html lang="en-us">
     <head>
-        <!-- Book generated using mdBook -->
-        <meta charset="UTF-8">
-        <title>Chapter 0 - Mastering Roguelike Game Design: From Permadeath to Procedural Generation</title>
+        <title>whisper.cpp : WASM example</title>
 
-
-        <!-- Custom HTML head -->
-        
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#ffffff">
-
-        <link rel="icon" href="favicon.svg">
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
-
-        <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
-
-        <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" href="highlight.css">
-        <link rel="stylesheet" href="tomorrow-night.css">
-        <link rel="stylesheet" href="ayu-highlight.css">
-
-        <!-- Custom theme stylesheets -->
-
+        <style>
+            #output {
+                width: 100%;
+                height: 100%;
+                margin: 0 auto;
+                margin-top: 10px;
+                border-left: 0px;
+                border-right: 0px;
+                padding-left: 0px;
+                padding-right: 0px;
+                display: block;
+                background-color: black;
+                color: white;
+                font-size: 10px;
+                font-family: 'Lucida Console', Monaco, monospace;
+                outline: none;
+                white-space: pre;
+                overflow-wrap: normal;
+                overflow-x: scroll;
+            }
+        </style>
+        <script src="coi-serviceworker.js"></script>
+        <link rel="icon" href="data:,">
     </head>
-    <body class="sidebar-visible no-js">
-    <div id="body-container">
-        <!-- Provide site root to javascript -->
-        <script>
-            var path_to_root = "";
-            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
-        </script>
+    <body>
+        <div id="main-container">
+            <b>Minimal <a href="https://github.com/ggerganov/whisper.cpp">whisper.cpp</a> example running fully in the browser</b>
 
-        <!-- Work around some values being stored in localStorage wrapped in quotes -->
-        <script>
-            try {
-                var theme = localStorage.getItem('mdbook-theme');
-                var sidebar = localStorage.getItem('mdbook-sidebar');
+            <br><br>
 
-                if (theme.startsWith('"') && theme.endsWith('"')) {
-                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
-                }
+            Usage instructions:<br>
+            <ul>
+                <li>Load a ggml model file (you can obtain one from <a href="https://ggml.ggerganov.com/">here</a>, recommended: <b>tiny</b> or <b>base</b>)</li>
+                <li>Select audio file to transcribe or record audio from the microphone (sample: <a href="https://whisper.ggerganov.com/jfk.wav">jfk.wav</a>)</li>
+                <li>Click on the "Transcribe" button to start the transcription</li>
+            </ul>
 
-                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
-                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
-                }
-            } catch (e) { }
-        </script>
+            Note that the computation is quite heavy and may take a few seconds to complete.<br>
+            The transcription results will be displayed in the text area below.<br><br>
+            <b>Important:</b>
+                <ul>
+                    <li>your browser must support WASM SIMD instructions for this to work</li>
+                    <li>Firefox cannot load files larger than 256 MB - use Chrome instead</li>
+                </ul>
 
-        <!-- Set the theme before any content is loaded, prevents flash -->
-        <script>
-            var theme;
-            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
-            if (theme === null || theme === undefined) { theme = default_theme; }
-            var html = document.querySelector('html');
-            html.classList.remove('light')
-            html.classList.add(theme);
-            var body = document.querySelector('body');
-            body.classList.remove('no-js')
-            body.classList.add('js');
-        </script>
+            <b>More examples:</b>
+                <a href="bench.wasm/">bench</a> |
+                <a href="stream.wasm">stream</a> |
+                <a href="command.wasm/">command</a> |
 
-        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+            <hr>
 
-        <!-- Hide / unhide sidebar before it is displayed -->
-        <script>
-            var body = document.querySelector('body');
-            var sidebar = null;
-            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
-            if (document.body.clientWidth >= 1080) {
-                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
-                sidebar = sidebar || 'visible';
-            } else {
-                sidebar = 'hidden';
-            }
-            sidebar_toggle.checked = sidebar === 'visible';
-            body.classList.remove('sidebar-visible');
-            body.classList.add("sidebar-" + sidebar);
-        </script>
-
-        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="0.roguelike-game-design-book-toc.html" class="active">Chapter 0</a></li><li class="chapter-item expanded affix "><a href="1.1.roguelike-definition-chapter.html">Chapter 1.1</a></li><li class="chapter-item expanded affix "><a href="1.2.roguelike-history-chapter.html">Chapter 1.2</a></li><li class="chapter-item expanded affix "><a href="1.3.roguelike-key-elements-chapter.html">Chapter 1.3</a></li><li class="chapter-item expanded affix "><a href="2.1.roguelike-permadeath-chapter.html">Chapter 2.1</a></li><li class="chapter-item expanded affix "><a href="2.2.roguelike-procedural-generation-chapter.html">Chapter 2.2</a></li><li class="chapter-item expanded affix "><a href="2.3.roguelike-turn-based-gameplay-chapter.html">Chapter 2.3</a></li><li class="chapter-item expanded affix "><a href="2.4.roguelike-grid-based-chapter.html">Chapter 2.4</a></li><li class="chapter-item expanded affix "><a href="2.5.roguelike-resource-management.html">Chapter 2.5</a></li><li class="chapter-item expanded affix "><a href="3.1.algorithms-for-dungeon-generation.html">Chapter 3.1</a></li><li class="chapter-item expanded affix "><a href="3.2.creating-balanced-and-interesting-levels.html">Chapter 3.2</a></li><li class="chapter-item expanded affix "><a href="3.3.generating-items-enemies-quests.html">Chapter 3.3</a></li><li class="chapter-item expanded affix "><a href="3.4.ensuring-fairness-in-randomized-content.html">Chapter 3.4</a></li><li class="chapter-item expanded affix "><a href="4.1.designing-character-classes-and-races.html">Chapter 4.1</a></li><li class="chapter-item expanded affix "><a href="4.2.expecience-points-and-leveling-mechanisms.html">Chapter 4.2</a></li><li class="chapter-item expanded affix "><a href="4.3.skill-trees-and-ability-unlocks.html">Chapter 4.3</a></li><li class="chapter-item expanded affix "><a href="4.4.balancing-character-growth-and-game-difficulty.html">Chapter 4.4</a></li><li class="chapter-item expanded affix "><a href="5.1.turn-based-combat-systems.html">Chapter 5.1</a></li><li class="chapter-item expanded affix "><a href="5.2.designing-diverse-and-challenging-enemies.html">Chapter 5.2</a></li><li class="chapter-item expanded affix "><a href="5.3.boss-fights-and-special-encounters.html">Chapter 5.3</a></li><li class="chapter-item expanded affix "><a href="5.4.balancing-combat-difficulty-and-player-skill.html">Chapter 5.4</a></li><li class="chapter-item expanded affix "><a href="6.1.roguelike-item-design-chapter.html">Chapter 6.1</a></li><li class="chapter-item expanded affix "><a href="6.2.roguelike-crafting-systems-chapter.html">Chapter 6.2</a></li><li class="chapter-item expanded affix "><a href="6.3.roguelike-currency-shop-mechanics-chapter.html">Chapter 6.3</a></li><li class="chapter-item expanded affix "><a href="6.4.roguelike-inventory-identification-chapter.html">Chapter 6.4</a></li><li class="chapter-item expanded affix "><a href="7.1.html">Chapter 7.1</a></li><li class="chapter-item expanded affix "><a href="7.2.html">Chapter 7.2</a></li><li class="chapter-item expanded affix "><a href="7.3.html">Chapter 7.3</a></li><li class="chapter-item expanded affix "><a href="7.4.html">Chapter 7.4</a></li><li class="chapter-item expanded affix "><a href="8.1.html">Chapter 8.1</a></li><li class="chapter-item expanded affix "><a href="8.2.html">Chapter 8.2</a></li><li class="chapter-item expanded affix "><a href="8.3.html">Chapter 8.3</a></li><li class="chapter-item expanded affix "><a href="8.4.html">Chapter 8.4</a></li><li class="chapter-item expanded affix "><a href="9.1.html">Chapter 9.1</a></li><li class="chapter-item expanded affix "><a href="9.2.html">Chapter 9.2</a></li><li class="chapter-item expanded affix "><a href="9.3.html">Chapter 9.3</a></li><li class="chapter-item expanded affix "><a href="9.4.html">Chapter 9.4</a></li><li class="chapter-item expanded affix "><a href="10.1.html">Chapter 10.1</a></li><li class="chapter-item expanded affix "><a href="10.2.html">Chapter 10.2</a></li><li class="chapter-item expanded affix "><a href="10.3.html">Chapter 10.3</a></li><li class="chapter-item expanded affix "><a href="10.4.html">Chapter 10.4</a></li><li class="chapter-item expanded affix "><a href="11.1.html">Chapter 11.1</a></li><li class="chapter-item expanded affix "><a href="11.2.html">Chapter 11.2</a></li><li class="chapter-item expanded affix "><a href="11.3.html">Chapter 11.3</a></li><li class="chapter-item expanded affix "><a href="11.4.html">Chapter 11.4</a></li><li class="chapter-item expanded affix "><a href="12.1.html">Chapter 12.1</a></li><li class="chapter-item expanded affix "><a href="12.2.html">Chapter 12.2</a></li><li class="chapter-item expanded affix "><a href="12.3.html">Chapter 12.3</a></li><li class="chapter-item expanded affix "><a href="12.4.html">Chapter 12.4</a></li><li class="chapter-item expanded affix "><a href="13.1.html">Chapter 13.1</a></li><li class="chapter-item expanded affix "><a href="13.2.html">Chapter 13.2</a></li><li class="chapter-item expanded affix "><a href="13.3.html">Chapter 13.3</a></li><li class="chapter-item expanded affix "><a href="13.4.html">Chapter 13.4</a></li><li class="chapter-item expanded affix "><a href="14.1.html">Chapter 14.1</a></li><li class="chapter-item expanded affix "><a href="14.2.html">Chapter 14.2</a></li><li class="chapter-item expanded affix "><a href="14.3.html">Chapter 14.3</a></li><li class="chapter-item expanded affix "><a href="14.4.html">Chapter 14.4</a></li><li class="chapter-item expanded affix "><a href="15.1.html">Chapter 15.1</a></li><li class="chapter-item expanded affix "><a href="15.2.html">Chapter 15.2</a></li><li class="chapter-item expanded affix "><a href="15.3.html">Chapter 15.3</a></li><li class="chapter-item expanded affix "><a href="15.4.html">Chapter 15.4</a></li><li class="chapter-item expanded affix "><a href="16.1.html">Chapter 16.1</a></li><li class="chapter-item expanded affix "><a href="16.2.html">Chapter 16.2</a></li><li class="chapter-item expanded affix "><a href="16.3.html">Chapter 16.3</a></li><li class="chapter-item expanded affix "><a href="appendix-a.html">Appendix a</a></li><li class="chapter-item expanded affix "><a href="appendix-b.html">Appendix b</a></li><li class="chapter-item expanded affix "><a href="appendix-c.html">Appendix c</a></li></ol>
+            <div id="model">
+                Whisper models: <span id="model-whisper-status"></span><br><br>
+                <button id="fetch-whisper-tiny-en"  onclick="loadWhisper('tiny.en')">tiny.en (75 MB)</button>
+                <button id="fetch-whisper-tiny"     onclick="loadWhisper('tiny')">tiny (75 MB)</button>
+                <button id="fetch-whisper-base-en"  onclick="loadWhisper('base.en')">base.en (142 MB)</button>
+                <button id="fetch-whisper-base"     onclick="loadWhisper('base')">base (142 MB)</button>
+                <button id="fetch-whisper-small-en" onclick="loadWhisper('small.en')">small.en (466 MB)</button>
+                <button id="fetch-whisper-small"    onclick="loadWhisper('small')">small (466 MB)</button>
+                <input type="file" id="whisper-file" name="file" onchange="loadFile(event, 'whisper.bin')" />
+                <br><br>
+                Quantized models:<br><br>
+                <button id="fetch-whisper-tiny-en-q5_1"   onclick="loadWhisper('tiny-en-q5_1')">tiny.en (Q5_1, 31 MB)</button>
+                <button id="fetch-whisper-tiny-q5_1"      onclick="loadWhisper('tiny-q5_1')">tiny (Q5_1, 31 MB)</button>
+                <button id="fetch-whisper-base-en-q5_1"   onclick="loadWhisper('base-en-q5_1')">base.en (Q5_1, 57 MB)</button>
+                <button id="fetch-whisper-base-q5_1"      onclick="loadWhisper('base-q5_1')">base (Q5_1, 57 MB)</button>
+                <button id="fetch-whisper-small-en-q5_1"  onclick="loadWhisper('small-en-q5_1')">small.en (Q5_1, 182 MB)</button>
+                <button id="fetch-whisper-small-q5_1"     onclick="loadWhisper('small-q5_1')">small (Q5_1, 182 MB)</button><br>
+                <button id="fetch-whisper-medium-en-q5_0" onclick="loadWhisper('medium-en-q5_0')">medium.en (Q5_0, 515 MB)</button>
+                <button id="fetch-whisper-medium-q5_0"    onclick="loadWhisper('medium-q5_0')">medium (Q5_0, 515 MB)</button>
+                <button id="fetch-whisper-large-q5_0"     onclick="loadWhisper('large-q5_0')">large (Q5_0, 1030 MB)</button>
+                <span id="fetch-whisper-progress"></span>
             </div>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
-                <div class="sidebar-resize-indicator"></div>
+
+            <br>
+
+            <!-- radio button to select between file upload or microphone -->
+            <div id="input">
+                Input:
+                <input type="radio" id="file" name="input" value="file" checked="checked" onchange="changeInput('file')" /> <label for="file">File</label>
+                <input type="radio" id="mic" name="input" value="mic" onchange="changeInput('mic')" /> <label for="mic">Microphone</label>
             </div>
-        </nav>
 
-        <!-- Track and set sidebar scroll position -->
-        <script>
-            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
-            sidebarScrollbox.addEventListener('click', function(e) {
-                if (e.target.tagName === 'A') {
-                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
-                }
-            }, { passive: true });
-            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
-            sessionStorage.removeItem('sidebar-scroll');
-            if (sidebarScrollTop) {
-                // preserve sidebar scroll position when navigating via links within sidebar
-                sidebarScrollbox.scrollTop = sidebarScrollTop;
-            } else {
-                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
-                var activeSection = document.querySelector('#sidebar .active');
-                if (activeSection) {
-                    activeSection.scrollIntoView({ block: 'center' });
-                }
-            }
-        </script>
+            <br>
 
-        <div id="page-wrapper" class="page-wrapper">
+            <div id="input_file">
+                Audio file:
+                <input type="file" id="file" name="file" onchange="loadAudio(event)" />
+            </div>
 
-            <div class="page">
-                                <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky">
-                    <div class="left-buttons">
-                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
-                            <i class="fa fa-bars"></i>
-                        </label>
-                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
-                            <i class="fa fa-paint-brush"></i>
-                        </button>
-                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
-                        </ul>
-                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </div>
+            <div id="input_mic" style="display: none;">
+                Microphone:
+                <button id="start" onclick="startRecording()">Start</button>
+                <button id="stop" onclick="stopRecording()" disabled>Stop</button>
 
-                    <h1 class="menu-title">Mastering Roguelike Game Design: From Permadeath to Procedural Generation</h1>
-
-                    <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
-                            <i id="print-button" class="fa fa-print"></i>
-                        </a>
-
-                    </div>
-                </div>
-
-                <div id="search-wrapper" class="hidden">
-                    <form id="searchbar-outer" class="searchbar-outer">
-                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
-                    </form>
-                    <div id="searchresults-outer" class="searchresults-outer hidden">
-                        <div id="searchresults-header" class="searchresults-header"></div>
-                        <ul id="searchresults">
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
-                <script>
-                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
-                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
-                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
-                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
-                    });
-                </script>
-
-                <div id="content" class="content">
-                    <main>
-                        <h1 id="mastering-roguelike-game-design-from-permadeath-to-procedural-generation"><a class="header" href="#mastering-roguelike-game-design-from-permadeath-to-procedural-generation">Mastering Roguelike Game Design: From Permadeath to Procedural Generation</a></h1>
-<h2 id="table-of-contents"><a class="header" href="#table-of-contents">Table of Contents</a></h2>
-<ol>
-<li>
-<p>Introduction to Roguelikes</p>
-<ol>
-<li>What is a Roguelike?</li>
-<li>Brief History of Roguelikes</li>
-<li>Key Elements of Roguelike Games</li>
-</ol>
-</li>
-<li>
-<p>Core Mechanics of Roguelikes</p>
-<ol>
-<li>Permadeath: The Ultimate Consequence</li>
-<li>Procedural Generation: Creating Infinite Worlds</li>
-<li>Turn-Based Gameplay: Strategic Decision Making</li>
-<li>Grid-Based Movement and Combat</li>
-<li>Resource Management and Inventory Systems</li>
-</ol>
-</li>
-<li>
-<p>Procedural Content Generation</p>
-<ol>
-<li>Algorithms for Dungeon Generation</li>
-<li>Creating Balanced and Interesting Levels</li>
-<li>Generating Items, Enemies, and Quests</li>
-<li>Ensuring Fairness in Randomized Content</li>
-</ol>
-</li>
-<li>
-<p>Character Progression and Skill Systems</p>
-<ol>
-<li>Designing Character Classes and Races</li>
-<li>Experience Points and Leveling Mechanisms</li>
-<li>Skill Trees and Ability Unlocks</li>
-<li>Balancing Character Growth and Game Difficulty</li>
-</ol>
-</li>
-<li>
-<p>Combat and Enemy Design</p>
-<ol>
-<li>Turn-Based Combat Systems</li>
-<li>Designing Diverse and Challenging Enemies</li>
-<li>Boss Fights and Special Encounters</li>
-<li>Balancing Combat Difficulty and Player Skill</li>
-</ol>
-</li>
-<li>
-<p>Item Design and Economy</p>
-<ol>
-<li>Creating Interesting and Balanced Items</li>
-<li>Implementing Crafting Systems</li>
-<li>Currency and Shop Mechanics</li>
-<li>Inventory Management and Item Identification</li>
-</ol>
-</li>
-<li>
-<p>World-Building and Narrative Design</p>
-<ol>
-<li>Creating Lore in a Procedurally Generated World</li>
-<li>Implementing Quests and Missions</li>
-<li>Environmental Storytelling Techniques</li>
-<li>Balancing Story and Gameplay in Roguelikes</li>
-</ol>
-</li>
-<li>
-<p>User Interface and Information Management</p>
-<ol>
-<li>Designing Intuitive UI for Complex Systems</li>
-<li>Displaying Critical Information to Players</li>
-<li>Minimap and Navigation Tools</li>
-<li>Inventory and Character Screens</li>
-</ol>
-</li>
-<li>
-<p>Difficulty and Progression</p>
-<ol>
-<li>Designing Difficulty Curves</li>
-<li>Implementing Multiple Ending Scenarios</li>
-<li>Creating Unlockables and Meta-Progression</li>
-<li>Balancing Challenge and Frustration</li>
-</ol>
-</li>
-<li>
-<p>Roguelike Elements in Other Genres</p>
-<ol>
-<li>Roguelite vs. Roguelike: Broadening the Definition</li>
-<li>Implementing Roguelike Elements in Action Games</li>
-<li>Strategy Games with Roguelike Features</li>
-<li>Roguelike Elements in RPGs and MMOs</li>
-</ol>
-</li>
-<li>
-<p>Technical Considerations</p>
-<ol>
-<li>Choosing the Right Engine and Tools</li>
-<li>Optimizing Procedural Generation</li>
-<li>Saving and Loading in Permadeath Games</li>
-<li>Implementing Replay and Spectator Features</li>
-</ol>
-</li>
-<li>
-<p>Testing and Balancing Roguelikes</p>
-<ol>
-<li>Playtesting Strategies for Randomized Content</li>
-<li>Data Analysis and Player Feedback</li>
-<li>Iterative Design and Continuous Improvement</li>
-<li>Balancing for Different Player Skill Levels</li>
-</ol>
-</li>
-<li>
-<p>Marketing and Community Building</p>
-<ol>
-<li>Finding Your Niche in the Roguelike Market</li>
-<li>Building a Community Around Your Game</li>
-<li>Early Access and Player Involvement</li>
-<li>Post-Launch Support and Expansions</li>
-</ol>
-</li>
-<li>
-<p>Case Studies: Successful Roguelikes and Their Design Choices</p>
-<ol>
-<li>NetHack: The Quintessential Roguelike</li>
-<li>The Binding of Isaac: Roguelike Elements in Action Games</li>
-<li>Hades: Storytelling in a Roguelike Framework</li>
-<li>Slay the Spire: Deck-Building Meets Roguelike</li>
-</ol>
-</li>
-<li>
-<p>Future of Roguelike Design</p>
-<ol>
-<li>Emerging Trends in Roguelike Games</li>
-<li>Potential for Procedural Narrative Generation</li>
-<li>Multiplayer and Cooperative Roguelikes</li>
-<li>Virtual Reality and Augmented Reality Roguelikes</li>
-</ol>
-</li>
-<li>
-<p>Conclusion: Crafting Your Roguelike Vision</p>
-<ol>
-<li>Bringing It All Together</li>
-<li>Finding Your Unique Angle</li>
-<li>Final Thoughts and Encouragement</li>
-</ol>
-</li>
-<li>
-<p>Appendices</p>
-<ol>
-<li>A Glossary of Roguelike Terms</li>
-<li>B Recommended Tools and Resources</li>
-<li>C Bibliography and Further Reading</li>
-</ol>
-</li>
-</ol>
-
-                    </main>
-
-                    <nav class="nav-wrapper" aria-label="Page navigation">
-                        <!-- Mobile navigation buttons -->
-
-                            <a rel="next prefetch" href="1.1.roguelike-definition-chapter.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
-
-                        <div style="clear: both"></div>
-                    </nav>
+                <!-- progress bar to show recording progress -->
+                <br><br>
+                <div id="progress" style="display: none;">
+                    <div id="progress-bar" style="width: 0%; height: 10px; background-color: #4CAF50;"></div>
+                    <div id="progress-text">0%</div>
                 </div>
             </div>
 
-            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+            <audio controls="controls" id="audio" loop hidden>
+                Your browser does not support the &lt;audio&gt; tag.
+                <source id="source" src="" type="audio/wav" />
+            </audio>
 
-                    <a rel="next prefetch" href="1.1.roguelike-definition-chapter.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
-            </nav>
+            <hr><br>
 
+            <table>
+                <tr>
+                    <td>
+                        Language:
+                        <select id="language" name="language">
+                            <option value="en">English</option>
+                            <option value="ar">Arabic</option>
+                            <option value="hy">Armenian</option>
+                            <option value="az">Azerbaijani</option>
+                            <option value="eu">Basque</option>
+                            <option value="be">Belarusian</option>
+                            <option value="bn">Bengali</option>
+                            <option value="bg">Bulgarian</option>
+                            <option value="ca">Catalan</option>
+                            <option value="zh">Chinese</option>
+                            <option value="hr">Croatian</option>
+                            <option value="cs">Czech</option>
+                            <option value="da">Danish</option>
+                            <option value="nl">Dutch</option>
+                            <option value="en">English</option>
+                            <option value="et">Estonian</option>
+                            <option value="tl">Filipino</option>
+                            <option value="fi">Finnish</option>
+                            <option value="fr">French</option>
+                            <option value="gl">Galician</option>
+                            <option value="ka">Georgian</option>
+                            <option value="de">German</option>
+                            <option value="el">Greek</option>
+                            <option value="gu">Gujarati</option>
+                            <option value="iw">Hebrew</option>
+                            <option value="hi">Hindi</option>
+                            <option value="hu">Hungarian</option>
+                            <option value="is">Icelandic</option>
+                            <option value="id">Indonesian</option>
+                            <option value="ga">Irish</option>
+                            <option value="it">Italian</option>
+                            <option value="ja">Japanese</option>
+                            <option value="kn">Kannada</option>
+                            <option value="ko">Korean</option>
+                            <option value="la">Latin</option>
+                            <option value="lv">Latvian</option>
+                            <option value="lt">Lithuanian</option>
+                            <option value="mk">Macedonian</option>
+                            <option value="ms">Malay</option>
+                            <option value="mt">Maltese</option>
+                            <option value="no">Norwegian</option>
+                            <option value="fa">Persian</option>
+                            <option value="pl">Polish</option>
+                            <option value="pt">Portuguese</option>
+                            <option value="ro">Romanian</option>
+                            <option value="ru">Russian</option>
+                            <option value="sr">Serbian</option>
+                            <option value="sk">Slovak</option>
+                            <option value="sl">Slovenian</option>
+                            <option value="es">Spanish</option>
+                            <option value="sw">Swahili</option>
+                            <option value="sv">Swedish</option>
+                            <option value="ta">Tamil</option>
+                            <option value="te">Telugu</option>
+                            <option value="th">Thai</option>
+                            <option value="tr">Turkish</option>
+                            <option value="uk">Ukrainian</option>
+                            <option value="ur">Urdu</option>
+                            <option value="vi">Vietnamese</option>
+                            <option value="cy">Welsh</option>
+                            <option value="yi">Yiddish</option>
+                        </select>
+                    </td>
+                    <!-- Slider to select number of threads between 1 and 16 -->
+                    <td>
+                        Threads:
+                        <input type="range" id="threads" name="threads" min="1" max="16" value="8" onchange="changeThreads(this.value)" />
+                        <span id="threads-value">8</span>
+                    </td>
+                    <td>
+                        <button onclick="onProcess(false);">Transcribe</button>
+                    </td>
+                    <td>
+                        <button onclick="onProcess(true);">Translate</button>
+                    </td>
+                </tr>
+            </table>
+
+            <br>
+
+            <!-- textarea with height filling the rest of the page -->
+            <textarea id="output" rows="20"></textarea>
+
+            <br><br>
+
+            <div class="cell-version">
+                <span>
+                    |
+                    Build time: <span class="nav-link">Tue Aug 12 10:58:52 2025</span> |
+                    Commit hash: <a class="nav-link" href="https://github.com/ggerganov/whisper.cpp/commit/5527454c">5527454c</a> |
+                    Commit subject: <span class="nav-link">whisper : fixed crash in GPU device selection on multi-GPU systems (#3372)</span> |
+                    <a class="nav-link" href="https://github.com/ggerganov/whisper.cpp/tree/master/examples/whisper.wasm">Source Code</a> |
+                </span>
+            </div>
         </div>
 
+        <script type="text/javascript" src="helpers.js"></script>
+        <script type='text/javascript'>
+            // TODO: convert audio buffer to WAV
+            function setAudio(audio) {
+                //if (audio) {
+                //    // convert to 16-bit PCM
+                //    var blob = new Blob([audio], { type: 'audio/wav' });
+                //    var url = URL.createObjectURL(blob);
+                //    document.getElementById('source').src = url;
+                //    document.getElementById('audio').hidden = false;
+                //    document.getElementById('audio').loop = false;
+                //    document.getElementById('audio').load();
+                //} else {
+                //    document.getElementById('audio').hidden = true;
+                //}
+            }
 
+            function changeInput(input) {
+                if (input == 'file') {
+                    document.getElementById('input_file').style.display = 'block';
+                    document.getElementById('input_mic' ).style.display = 'none';
+                    document.getElementById('progress'  ).style.display = 'none';
+                } else {
+                    document.getElementById('input_file').style.display = 'none';
+                    document.getElementById('input_mic' ).style.display = 'block';
+                    document.getElementById('progress'  ).style.display = 'block';
+                }
+            }
 
+            var Module = {
+                print: printTextarea,
+                printErr: printTextarea,
+                setStatus: function(text) {
+                    printTextarea('js: ' + text);
+                },
+                monitorRunDependencies: function(left) {
+                }
+            };
 
-        <script>
-            window.playground_copyable = true;
+            // web audio context
+            var context = null;
+
+            // audio data
+            var audio = null;
+
+            // the whisper instance
+            var instance = null;
+            var model_whisper = '';
+
+            // helper function
+            function convertTypedArray(src, type) {
+                var buffer = new ArrayBuffer(src.byteLength);
+                var baseView = new src.constructor(buffer).set(src);
+                return new type(buffer);
+            }
+
+            //
+            // load model
+            //
+
+            let dbVersion = 1
+            let dbName    = 'whisper.ggerganov.com';
+            let indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB
+
+            function storeFS(fname, buf) {
+                // write to WASM file using FS_createDataFile
+                // if the file exists, delete it
+                try {
+                    Module.FS_unlink(fname);
+                } catch (e) {
+                    // ignore
+                }
+
+                Module.FS_createDataFile("/", fname, buf, true, true);
+
+                //model_whisper = fname;
+
+                document.getElementById('model-whisper-status').innerHTML = 'loaded "' + model_whisper + '"!';
+
+                printTextarea('storeFS: stored model: ' + fname + ' size: ' + buf.length);
+
+                document.getElementById('model').innerHTML = 'Model fetched: ' + model_whisper;
+            }
+
+            function loadFile(event, fname) {
+                var file = event.target.files[0] || null;
+                if (file == null) {
+                    return;
+                }
+
+                printTextarea("loadFile: loading model: " + file.name + ", size: " + file.size + " bytes");
+                printTextarea('loadFile: please wait ...');
+
+                var reader = new FileReader();
+                reader.onload = function(event) {
+                    var buf = new Uint8Array(reader.result);
+                    storeFS(fname, buf);
+                }
+                reader.readAsArrayBuffer(file);
+
+                document.getElementById('fetch-whisper-tiny-en' ).style.display = 'none';
+                document.getElementById('fetch-whisper-base-en' ).style.display = 'none';
+                document.getElementById('fetch-whisper-small-en').style.display = 'none';
+                document.getElementById('fetch-whisper-tiny'    ).style.display = 'none';
+                document.getElementById('fetch-whisper-base'    ).style.display = 'none';
+                document.getElementById('fetch-whisper-small'   ).style.display = 'none';
+
+                document.getElementById('fetch-whisper-tiny-en-q5_1'  ).style.display = 'none';
+                document.getElementById('fetch-whisper-tiny-q5_1'     ).style.display = 'none';
+                document.getElementById('fetch-whisper-base-en-q5_1'  ).style.display = 'none';
+                document.getElementById('fetch-whisper-base-q5_1'     ).style.display = 'none';
+                document.getElementById('fetch-whisper-small-en-q5_1' ).style.display = 'none';
+                document.getElementById('fetch-whisper-small-q5_1'    ).style.display = 'none';
+                document.getElementById('fetch-whisper-medium-en-q5_0').style.display = 'none';
+                document.getElementById('fetch-whisper-medium-q5_0'   ).style.display = 'none';
+                document.getElementById('fetch-whisper-large-q5_0'    ).style.display = 'none';
+
+                document.getElementById('whisper-file'          ).style.display = 'none';
+                document.getElementById('model-whisper-status'  ).innerHTML = 'loaded model: ' + file.name;
+            }
+
+            function loadWhisper(model) {
+                let urls = {
+                    'tiny.en':  'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.en.bin',
+                    'tiny':     'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin',
+                    'base.en':  'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin',
+                    'base':     'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin',
+                    'small.en': 'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small.en.bin',
+                    'small':    'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small.bin',
+
+                    'tiny-en-q5_1':  'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.en-q5_1.bin',
+                    'tiny-q5_1':     'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny-q5_1.bin',
+                    'base-en-q5_1':  'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en-q5_1.bin',
+                    'base-q5_1':     'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base-q5_1.bin',
+                    'small-en-q5_1': 'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small.en-q5_1.bin',
+                    'small-q5_1':    'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small-q5_1.bin',
+                    'medium-en-q5_0':'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-medium.en-q5_0.bin',
+                    'medium-q5_0':   'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-medium-q5_0.bin',
+                    'large-q5_0':    'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-q5_0.bin',
+                };
+
+                let sizes = {
+                    'tiny.en':  75,
+                    'tiny':     75,
+                    'base.en':  142,
+                    'base':     142,
+                    'small.en': 466,
+                    'small':    466,
+
+                    'tiny-en-q5_1':   31,
+                    'tiny-q5_1':      31,
+                    'base-en-q5_1':   57,
+                    'base-q5_1':      57,
+                    'small-en-q5_1':  182,
+                    'small-q5_1':     182,
+                    'medium-en-q5_0': 515,
+                    'medium-q5_0':    515,
+                    'large-q5_0':     1030,
+                };
+
+                let url     = urls[model];
+                let dst     = 'whisper.bin';
+                let size_mb = sizes[model];
+
+                model_whisper = model;
+
+                document.getElementById('fetch-whisper-tiny-en' ).style.display = 'none';
+                document.getElementById('fetch-whisper-base-en' ).style.display = 'none';
+                document.getElementById('fetch-whisper-small-en').style.display = 'none';
+                document.getElementById('fetch-whisper-tiny'    ).style.display = 'none';
+                document.getElementById('fetch-whisper-base'    ).style.display = 'none';
+                document.getElementById('fetch-whisper-small'   ).style.display = 'none';
+
+                document.getElementById('fetch-whisper-tiny-en-q5_1'  ).style.display = 'none';
+                document.getElementById('fetch-whisper-tiny-q5_1'     ).style.display = 'none';
+                document.getElementById('fetch-whisper-base-en-q5_1'  ).style.display = 'none';
+                document.getElementById('fetch-whisper-base-q5_1'     ).style.display = 'none';
+                document.getElementById('fetch-whisper-small-en-q5_1' ).style.display = 'none';
+                document.getElementById('fetch-whisper-small-q5_1'    ).style.display = 'none';
+                document.getElementById('fetch-whisper-medium-en-q5_0').style.display = 'none';
+                document.getElementById('fetch-whisper-medium-q5_0'   ).style.display = 'none';
+                document.getElementById('fetch-whisper-large-q5_0'    ).style.display = 'none';
+
+                document.getElementById('whisper-file'        ).style.display = 'none';
+                document.getElementById('model-whisper-status').innerHTML = 'loading model: ' + model;
+
+                cbProgress = function(p) {
+                    let el = document.getElementById('fetch-whisper-progress');
+                    el.innerHTML = Math.round(100*p) + '%';
+                };
+
+                cbCancel = function() {
+                    var el;
+
+                    el = document.getElementById('fetch-whisper-tiny-en' ); if (el) el.style.display = 'inline-block';
+                    el = document.getElementById('fetch-whisper-base-en' ); if (el) el.style.display = 'inline-block';
+                    el = document.getElementById('fetch-whisper-small-en'); if (el) el.style.display = 'inline-block';
+                    el = document.getElementById('fetch-whisper-tiny'    ); if (el) el.style.display = 'inline-block';
+                    el = document.getElementById('fetch-whisper-base'    ); if (el) el.style.display = 'inline-block';
+                    el = document.getElementById('fetch-whisper-small'   ); if (el) el.style.display = 'inline-block';
+
+                    el = document.getElementById('fetch-whisper-tiny-en-q5_1'  ); if (el) el.style.display = 'inline-block';
+                    el = document.getElementById('fetch-whisper-tiny-q5_1'     ); if (el) el.style.display = 'inline-block';
+                    el = document.getElementById('fetch-whisper-base-en-q5_1'  ); if (el) el.style.display = 'inline-block';
+                    el = document.getElementById('fetch-whisper-base-q5_1'     ); if (el) el.style.display = 'inline-block';
+                    el = document.getElementById('fetch-whisper-small-en-q5_1' ); if (el) el.style.display = 'inline-block';
+                    el = document.getElementById('fetch-whisper-small-q5_1'    ); if (el) el.style.display = 'inline-block';
+                    el = document.getElementById('fetch-whisper-medium-en-q5_0'); if (el) el.style.display = 'inline-block';
+                    el = document.getElementById('fetch-whisper-medium-q5_0'   ); if (el) el.style.display = 'inline-block';
+                    el = document.getElementById('fetch-whisper-large-q5_0'    ); if (el) el.style.display = 'inline-block';
+
+                    el = document.getElementById('whisper-file'        ); if (el) el.style.display = 'inline-block';
+                    el = document.getElementById('model-whisper-status'); if (el) el.innerHTML = '';
+                };
+
+                loadRemote(url, dst, size_mb, cbProgress, storeFS, cbCancel, printTextarea);
+            }
+
+            //
+            // audio file
+            //
+
+            const kMaxAudio_s = 30*60;
+            const kMaxRecording_s = 2*60;
+            const kSampleRate = 16000;
+
+            window.AudioContext = window.AudioContext || window.webkitAudioContext;
+            window.OfflineAudioContext = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+
+            function loadAudio(event) {
+                if (!context) {
+                    context = new AudioContext({
+                        sampleRate: kSampleRate,
+                        channelCount: 1,
+                        echoCancellation: false,
+                        autoGainControl:  true,
+                        noiseSuppression: true,
+                    });
+                }
+
+                var file = event.target.files[0] || null;
+                if (file == null) {
+                    return;
+                }
+
+                printTextarea('js: loading audio: ' + file.name + ', size: ' + file.size + ' bytes');
+                printTextarea('js: please wait ...');
+
+                var reader = new FileReader();
+                reader.onload = function(event) {
+                    var buf = new Uint8Array(reader.result);
+
+                    context.decodeAudioData(buf.buffer, function(audioBuffer) {
+                        var offlineContext = new OfflineAudioContext(audioBuffer.numberOfChannels, audioBuffer.length, audioBuffer.sampleRate);
+                        var source = offlineContext.createBufferSource();
+                        source.buffer = audioBuffer;
+                        source.connect(offlineContext.destination);
+                        source.start(0);
+
+                        offlineContext.startRendering().then(function(renderedBuffer) {
+                            audio = renderedBuffer.getChannelData(0);
+                            printTextarea('js: audio loaded, size: ' + audio.length);
+
+                            // truncate to first 30 seconds
+                            if (audio.length > kMaxAudio_s*kSampleRate) {
+                                audio = audio.slice(0, kMaxAudio_s*kSampleRate);
+                                printTextarea('js: truncated audio to first ' + kMaxAudio_s + ' seconds');
+                            }
+
+                            setAudio(audio);
+                        });
+                    }, function(e) {
+                        printTextarea('js: error decoding audio: ' + e);
+                        audio = null;
+                        setAudio(audio);
+                    });
+                }
+                reader.readAsArrayBuffer(file);
+            }
+
+            //
+            // microphone
+            //
+
+            var mediaRecorder = null;
+            var doRecording = false;
+            var startTime = 0;
+
+            function stopRecording() {
+                doRecording = false;
+            }
+
+            // record up to kMaxRecording_s seconds of audio from the microphone
+            // check if doRecording is false every 1000 ms and stop recording if so
+            // update progress information
+            function startRecording() {
+                if (!context) {
+                    context = new AudioContext({
+                        sampleRate: kSampleRate,
+                        channelCount: 1,
+                        echoCancellation: false,
+                        autoGainControl:  true,
+                        noiseSuppression: true,
+                    });
+                }
+
+                document.getElementById('start').disabled = true;
+                document.getElementById('stop').disabled = false;
+
+                document.getElementById('progress-bar').style.width = '0%';
+                document.getElementById('progress-text').innerHTML = '0%';
+
+                doRecording = true;
+                startTime = Date.now();
+
+                var chunks = [];
+                var stream = null;
+
+                navigator.mediaDevices.getUserMedia({audio: true, video: false})
+                    .then(function(s) {
+                        stream = s;
+                        mediaRecorder = new MediaRecorder(stream);
+                        mediaRecorder.ondataavailable = function(e) {
+                            chunks.push(e.data);
+                        };
+                        mediaRecorder.onstop = function(e) {
+                            var blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
+                            chunks = [];
+
+                            document.getElementById('start').disabled = false;
+                            document.getElementById('stop').disabled = true;
+
+                            var reader = new FileReader();
+                            reader.onload = function(event) {
+                                var buf = new Uint8Array(reader.result);
+
+                                context.decodeAudioData(buf.buffer, function(audioBuffer) {
+                                    var offlineContext = new OfflineAudioContext(audioBuffer.numberOfChannels, audioBuffer.length, audioBuffer.sampleRate);
+                                    var source = offlineContext.createBufferSource();
+                                    source.buffer = audioBuffer;
+                                    source.connect(offlineContext.destination);
+                                    source.start(0);
+
+                                    offlineContext.startRendering().then(function(renderedBuffer) {
+                                        audio = renderedBuffer.getChannelData(0);
+                                        printTextarea('js: audio recorded, size: ' + audio.length);
+
+                                        // truncate to first 30 seconds
+                                        if (audio.length > kMaxRecording_s*kSampleRate) {
+                                            audio = audio.slice(0, kMaxRecording_s*kSampleRate);
+                                            printTextarea('js: truncated audio to first ' + kMaxRecording_s + ' seconds');
+                                        }
+                                        setAudio(audio);
+                                    });
+                                }, function(e) {
+                                    printTextarea('js: error decoding audio: ' + e);
+                                    audio = null;
+                                    setAudio(audio);
+                                });
+                            }
+
+                            reader.readAsArrayBuffer(blob);
+                        };
+                        mediaRecorder.start();
+                    })
+                    .catch(function(err) {
+                        printTextarea('js: error getting audio stream: ' + err);
+                    });
+
+                var interval = setInterval(function() {
+                    if (!doRecording) {
+                        clearInterval(interval);
+                        mediaRecorder.stop();
+                        stream.getTracks().forEach(function(track) {
+                            track.stop();
+                        });
+                    }
+
+                    document.getElementById('progress-bar').style.width = (100*(Date.now() - startTime)/1000/kMaxRecording_s) + '%';
+                    document.getElementById('progress-text').innerHTML = (100*(Date.now() - startTime)/1000/kMaxRecording_s).toFixed(0) + '%';
+                }, 1000);
+
+                printTextarea('js: recording ...');
+
+                setTimeout(function() {
+                    if (doRecording) {
+                        printTextarea('js: recording stopped after ' + kMaxRecording_s + ' seconds');
+                        stopRecording();
+                    }
+                }, kMaxRecording_s*1000);
+            }
+
+            //
+            // transcribe
+            //
+
+            var nthreads = 8;
+
+            function changeThreads(value) {
+                nthreads = parseInt(value, 10);
+                document.getElementById('threads-value').innerHTML = nthreads;
+            }
+
+            function onProcess(translate) {
+                if (!instance) {
+                    instance = Module.init('whisper.bin');
+
+                    if (instance) {
+                        printTextarea("js: whisper initialized, instance: " + instance);
+                        document.getElementById('model').innerHTML = 'Model loaded: ' + model_whisper;
+                    }
+                }
+
+                if (!instance) {
+                    printTextarea("js: failed to initialize whisper");
+                    return;
+                }
+
+                if (!audio) {
+                    printTextarea("js: no audio data");
+                    return;
+                }
+
+                if (instance) {
+                    printTextarea('');
+                    printTextarea('js: processing - this might take a while ...');
+                    printTextarea('');
+
+                    setTimeout(function() {
+                        var ret = Module.full_default(instance, audio, document.getElementById('language').value, nthreads, translate);
+                        console.log('js: full_default returned: ' + ret);
+                        if (ret) {
+                            printTextarea("js: whisper returned: " + ret);
+                        }
+                    }, 100);
+                }
+            }
         </script>
-
-
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
-
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
-
-        <!-- Custom JS scripts -->
-
-
-    </div>
+        <script type="text/javascript" src="main.js"></script>
     </body>
 </html>
